@@ -1,0 +1,39 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using MilenioRadartonaAPI.Areas.Identity.Data
+@inject SignInManager<MilenioRadartonaAPIUser> SignInManager
+@inject UserManager<MilenioRadartonaAPIUser> UserManager
+
+    <ul class="navbar-nav mr-4">
+        @if (SignInManager.IsSignedIn(User))
+        {
+            <li class="nav-item active">
+                <a class="nav-link" asp-controller="Home" asp-action="Tutorial">Tutorial<span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" asp-controller="Intra" asp-action="Index">Intranet</a>
+            </li>
+            <li class="nav-item">
+                <form id="logoutForm" class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                    <button id="logout" type="submit" style="background: #ffffff00; border: none;"><a class="nav-link text-light">Sair</a></button>
+                </form>
+            </li>
+
+
+        }
+        else
+        {
+            <li class="nav-item active">
+                <a class="nav-link" asp-controller="Home" asp-action="Tutorial">Tutorial<span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item active">
+                <a class="nav-link" asp-area="Identity" asp-page="/Account/Register">Registrar</a>
+            </li>
+            <li class="nav-item active">
+                <a class="nav-link" asp-area="Identity" asp-page="/Account/Login">Radares</a>
+            </li>
+            <li class="nav-item active">
+                <a class="nav-link" asp-controller="Optimus" asp-action="Login">Optimus</a>
+            </li>
+
+        }
+    </ul>

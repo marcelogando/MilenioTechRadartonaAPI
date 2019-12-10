@@ -1,0 +1,43 @@
+﻿<!doctype html>
+
+<html lang="pt-br" dir="ltr">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link rel="stylesheet" href="~/css/reset.css">
+    <link rel="icon" href="~/images/logo.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Milenio Tech</title>
+
+</head>
+
+
+<body>
+    <nav id="nav" class="navbar navbar-expand-lg navbar-dark">
+        <nav id="nav" class="navbar navbar-expand-lg">
+            <a asp-controller="home" asp-action="Index"><img src="~/images/logo-milenio-bus-white.png" alt="MILÊNIO TECH"></a>
+            <a asp-controller="home" asp-action="Index" class="ml-1 navbar-brand">MILÊNIO TECH</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo03" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
+                <partial name="_LoginPartial" />
+            </div>
+        </nav>
+    </nav>
+
+    <div class="quad"></div>
+    <div class="quad2"></div>
+
+
+    @RenderBody()
+
+
+
+</body>
+</html>

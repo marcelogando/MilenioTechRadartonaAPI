@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  milenioradartonaapi:
+    image: ${DOCKER_REGISTRY-}milenioradartonaapi
+    build:
+      context: .
+      dockerfile: MilenioRadartonaAPI/Dockerfile

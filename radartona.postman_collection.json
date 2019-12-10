@@ -1,0 +1,558 @@
+{
+	"info": {
+		"_postman_id": "e61b33bf-f11d-4c29-87ad-c99807331063",
+		"name": "radartona",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": " api.mileniotech.com.br/v1/GetLocalizacaoRadares",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6WyJtYXJjZWxvZ2FuZG9AZ21haWwuY29tIiwibWFyY2Vsb2dhbmRvQGdtYWlsLmNvbSJdLCJqdGkiOiJmN2ZmNjY4NWRhM2E0Zjg3OGY3NjQ2MmE4ZGIxOGQ1NSIsIm5iZiI6MTU3NDA4MTgzMSwiZXhwIjoxNTc0MTY4MjMxLCJpYXQiOjE1NzQwODE4MzEsImlzcyI6IkV4ZW1wbG9Jc3N1ZXIiLCJhdWQiOiJFeGVtcGxvQXVkaWVuY2UifQ.a4si726fjxGVC2L-Ujk8nywqeSmDI6II0bM99DUxociN9AXGLwW7uj4x6u8WKnhvYhfBia0VUcPCRlGR-e0YAj-j6KztvhhggBSodrZC11D5FKiAy5SWRk-O9O7PIW_8cS0dYO6IBw5wrYLdTzOw6AKRfIKLtzhWwQtj6_N_3Yg12es2kVKX7CgHMr0-nZMn7Kh6_99f2zH3OuD_K1lSRSf2TEfyV-QyLBoybzXynaAQyk-KMrjQz3uELgxW89ohAARbqHEpmLSQEoj3_-KH7oIZ6rm6P0PLUS1xI25tkyQsizr9wjD0YuIUSbuFRlXSGuJjBgoFp8skaJNbPfZOXA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "mileniotech.com.br/v1/GetLocalizacaoRadares",
+					"host": [
+						"mileniotech",
+						"com",
+						"br"
+					],
+					"path": [
+						"v1",
+						"GetLocalizacaoRadares"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": " api.mileniotech.com.br/v1/GetRadaresTipoEnquadramento?enquadramento=V",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6WyJtYXJjZWxvZ2FuZG9AZ21haWwuY29tIiwibWFyY2Vsb2dhbmRvQGdtYWlsLmNvbSJdLCJqdGkiOiJhYzYwMDFhMmZkMzU0N2U1ODRmMTc4M2M4NTkzZTk2NSIsIm5iZiI6MTU3NDA3NjIxNSwiZXhwIjoxNTc0MTYyNjE1LCJpYXQiOjE1NzQwNzYyMTUsImlzcyI6IkV4ZW1wbG9Jc3N1ZXIiLCJhdWQiOiJFeGVtcGxvQXVkaWVuY2UifQ.APVh2kuEQ3-DHSMAmKJGA9ngKPZ7icOkajajZHMSWa_DAkLivB8EH4Kiz11UqVIUpFLg4Eq9ggovsluHVV55wtdzDkkPynd6JW1sCrlWL9HSPlqjkV4Vk-FgDUr2v11U7iHg2OSs6yN9HhIQOHb03eTpH5JcW2td47guGbB2qztPZLPG8xLaByYeexWdhGtXH229olnPmQeTzhQzsXc7Sf-YRIuJUVv7-0VZM2Wr-VkJZuyblSYZJM-054AKWo7vYPS1ijmKMQYORdMRK3OkSJNBvT9nHYOIuqAbk6cTF5udqjjzz0eRC6y7FYcVQ8sQGJ63bz2d4JoapSH-U1Z-Ag",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "mileniotech.com.br/v1/GetRadaresTipoEnquadramento?enquadramento=V",
+					"host": [
+						"mileniotech",
+						"com",
+						"br"
+					],
+					"path": [
+						"v1",
+						"GetRadaresTipoEnquadramento"
+					],
+					"query": [
+						{
+							"key": "enquadramento",
+							"value": "V"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "api.mileniotech.com.br/v1/GetRadaresZonaConcessao?ZonaConcessao=Morumbi",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6WyJtYXJjZWxvZ2FuZG9AZ21haWwuY29tIiwibWFyY2Vsb2dhbmRvQGdtYWlsLmNvbSJdLCJqdGkiOiJhYzYwMDFhMmZkMzU0N2U1ODRmMTc4M2M4NTkzZTk2NSIsIm5iZiI6MTU3NDA3NjIxNSwiZXhwIjoxNTc0MTYyNjE1LCJpYXQiOjE1NzQwNzYyMTUsImlzcyI6IkV4ZW1wbG9Jc3N1ZXIiLCJhdWQiOiJFeGVtcGxvQXVkaWVuY2UifQ.APVh2kuEQ3-DHSMAmKJGA9ngKPZ7icOkajajZHMSWa_DAkLivB8EH4Kiz11UqVIUpFLg4Eq9ggovsluHVV55wtdzDkkPynd6JW1sCrlWL9HSPlqjkV4Vk-FgDUr2v11U7iHg2OSs6yN9HhIQOHb03eTpH5JcW2td47guGbB2qztPZLPG8xLaByYeexWdhGtXH229olnPmQeTzhQzsXc7Sf-YRIuJUVv7-0VZM2Wr-VkJZuyblSYZJM-054AKWo7vYPS1ijmKMQYORdMRK3OkSJNBvT9nHYOIuqAbk6cTF5udqjjzz0eRC6y7FYcVQ8sQGJ63bz2d4JoapSH-U1Z-Ag",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "mileniotech.com.br/v1/GetRadaresZonaConcessao?ZonaConcessao=Morumbi",
+					"host": [
+						"mileniotech",
+						"com",
+						"br"
+					],
+					"path": [
+						"v1",
+						"GetRadaresZonaConcessao"
+					],
+					"query": [
+						{
+							"key": "ZonaConcessao",
+							"value": "Morumbi"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "api.mileniotech.com.br/v1/GetFluxoVeiculosRadares?Radares=6707&DataConsulta=2019-02-28",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6WyJtYXJjZWxvZ2FuZG9AZ21haWwuY29tIiwibWFyY2Vsb2dhbmRvQGdtYWlsLmNvbSJdLCJqdGkiOiJhYzYwMDFhMmZkMzU0N2U1ODRmMTc4M2M4NTkzZTk2NSIsIm5iZiI6MTU3NDA3NjIxNSwiZXhwIjoxNTc0MTYyNjE1LCJpYXQiOjE1NzQwNzYyMTUsImlzcyI6IkV4ZW1wbG9Jc3N1ZXIiLCJhdWQiOiJFeGVtcGxvQXVkaWVuY2UifQ.APVh2kuEQ3-DHSMAmKJGA9ngKPZ7icOkajajZHMSWa_DAkLivB8EH4Kiz11UqVIUpFLg4Eq9ggovsluHVV55wtdzDkkPynd6JW1sCrlWL9HSPlqjkV4Vk-FgDUr2v11U7iHg2OSs6yN9HhIQOHb03eTpH5JcW2td47guGbB2qztPZLPG8xLaByYeexWdhGtXH229olnPmQeTzhQzsXc7Sf-YRIuJUVv7-0VZM2Wr-VkJZuyblSYZJM-054AKWo7vYPS1ijmKMQYORdMRK3OkSJNBvT9nHYOIuqAbk6cTF5udqjjzz0eRC6y7FYcVQ8sQGJ63bz2d4JoapSH-U1Z-Ag",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "mileniotech.com.br/v1/GetFluxoVeiculosRadares?Radares=6707&DataConsulta=2019-02-28",
+					"host": [
+						"mileniotech",
+						"com",
+						"br"
+					],
+					"path": [
+						"v1",
+						"GetFluxoVeiculosRadares"
+					],
+					"query": [
+						{
+							"key": "Radares",
+							"value": "6707"
+						},
+						{
+							"key": "DataConsulta",
+							"value": "2019-02-28"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "mileniotech.com.br/v1/GetTipoVeiculosRadares?Radares=6707&DataConsulta=2019-02-28",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6WyJtYXJjZWxvZ2FuZG9AZ21haWwuY29tIiwibWFyY2Vsb2dhbmRvQGdtYWlsLmNvbSJdLCJqdGkiOiJhYzYwMDFhMmZkMzU0N2U1ODRmMTc4M2M4NTkzZTk2NSIsIm5iZiI6MTU3NDA3NjIxNSwiZXhwIjoxNTc0MTYyNjE1LCJpYXQiOjE1NzQwNzYyMTUsImlzcyI6IkV4ZW1wbG9Jc3N1ZXIiLCJhdWQiOiJFeGVtcGxvQXVkaWVuY2UifQ.APVh2kuEQ3-DHSMAmKJGA9ngKPZ7icOkajajZHMSWa_DAkLivB8EH4Kiz11UqVIUpFLg4Eq9ggovsluHVV55wtdzDkkPynd6JW1sCrlWL9HSPlqjkV4Vk-FgDUr2v11U7iHg2OSs6yN9HhIQOHb03eTpH5JcW2td47guGbB2qztPZLPG8xLaByYeexWdhGtXH229olnPmQeTzhQzsXc7Sf-YRIuJUVv7-0VZM2Wr-VkJZuyblSYZJM-054AKWo7vYPS1ijmKMQYORdMRK3OkSJNBvT9nHYOIuqAbk6cTF5udqjjzz0eRC6y7FYcVQ8sQGJ63bz2d4JoapSH-U1Z-Ag",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "mileniotech.com.br/v1/GetTipoVeiculosRadares?Radares=6707&DataConsulta=2019-02-28",
+					"host": [
+						"mileniotech",
+						"com",
+						"br"
+					],
+					"path": [
+						"v1",
+						"GetTipoVeiculosRadares"
+					],
+					"query": [
+						{
+							"key": "Radares",
+							"value": "6707"
+						},
+						{
+							"key": "DataConsulta",
+							"value": "2019-02-28"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "mileniotech.com.br/v1/GetInfracoesRadares?Radares=6707&DataConsulta=2019-02-28",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6WyJtYXJjZWxvZ2FuZG9AZ21haWwuY29tIiwibWFyY2Vsb2dhbmRvQGdtYWlsLmNvbSJdLCJqdGkiOiJhYzYwMDFhMmZkMzU0N2U1ODRmMTc4M2M4NTkzZTk2NSIsIm5iZiI6MTU3NDA3NjIxNSwiZXhwIjoxNTc0MTYyNjE1LCJpYXQiOjE1NzQwNzYyMTUsImlzcyI6IkV4ZW1wbG9Jc3N1ZXIiLCJhdWQiOiJFeGVtcGxvQXVkaWVuY2UifQ.APVh2kuEQ3-DHSMAmKJGA9ngKPZ7icOkajajZHMSWa_DAkLivB8EH4Kiz11UqVIUpFLg4Eq9ggovsluHVV55wtdzDkkPynd6JW1sCrlWL9HSPlqjkV4Vk-FgDUr2v11U7iHg2OSs6yN9HhIQOHb03eTpH5JcW2td47guGbB2qztPZLPG8xLaByYeexWdhGtXH229olnPmQeTzhQzsXc7Sf-YRIuJUVv7-0VZM2Wr-VkJZuyblSYZJM-054AKWo7vYPS1ijmKMQYORdMRK3OkSJNBvT9nHYOIuqAbk6cTF5udqjjzz0eRC6y7FYcVQ8sQGJ63bz2d4JoapSH-U1Z-Ag",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "mileniotech.com.br/v1/GetInfracoesRadares?Radares=6707&DataConsulta=2019-02-28",
+					"host": [
+						"mileniotech",
+						"com",
+						"br"
+					],
+					"path": [
+						"v1",
+						"GetInfracoesRadares"
+					],
+					"query": [
+						{
+							"key": "Radares",
+							"value": "6707"
+						},
+						{
+							"key": "DataConsulta",
+							"value": "2019-02-28"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "mileniotech.com.br/v1/GetAcuraciaIdentificacaoRadares?Radares=6707&DataConsulta=2019-02-28",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6WyJtYXJjZWxvZ2FuZG9AZ21haWwuY29tIiwibWFyY2Vsb2dhbmRvQGdtYWlsLmNvbSJdLCJqdGkiOiJhYzYwMDFhMmZkMzU0N2U1ODRmMTc4M2M4NTkzZTk2NSIsIm5iZiI6MTU3NDA3NjIxNSwiZXhwIjoxNTc0MTYyNjE1LCJpYXQiOjE1NzQwNzYyMTUsImlzcyI6IkV4ZW1wbG9Jc3N1ZXIiLCJhdWQiOiJFeGVtcGxvQXVkaWVuY2UifQ.APVh2kuEQ3-DHSMAmKJGA9ngKPZ7icOkajajZHMSWa_DAkLivB8EH4Kiz11UqVIUpFLg4Eq9ggovsluHVV55wtdzDkkPynd6JW1sCrlWL9HSPlqjkV4Vk-FgDUr2v11U7iHg2OSs6yN9HhIQOHb03eTpH5JcW2td47guGbB2qztPZLPG8xLaByYeexWdhGtXH229olnPmQeTzhQzsXc7Sf-YRIuJUVv7-0VZM2Wr-VkJZuyblSYZJM-054AKWo7vYPS1ijmKMQYORdMRK3OkSJNBvT9nHYOIuqAbk6cTF5udqjjzz0eRC6y7FYcVQ8sQGJ63bz2d4JoapSH-U1Z-Ag",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "mileniotech.com.br/v1/GetAcuraciaIdentificacaoRadares?Radares=6707&DataConsulta=2019-02-28",
+					"host": [
+						"mileniotech",
+						"com",
+						"br"
+					],
+					"path": [
+						"v1",
+						"GetAcuraciaIdentificacaoRadares"
+					],
+					"query": [
+						{
+							"key": "Radares",
+							"value": "6707"
+						},
+						{
+							"key": "DataConsulta",
+							"value": "2019-02-28"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "mileniotech.com.br/v1/GetPerfilVelocidadesRadar?VelocidadeMin=0&VelocidadeMax=50",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6WyJtYXJjZWxvZ2FuZG9AZ21haWwuY29tIiwibWFyY2Vsb2dhbmRvQGdtYWlsLmNvbSJdLCJqdGkiOiJhYzYwMDFhMmZkMzU0N2U1ODRmMTc4M2M4NTkzZTk2NSIsIm5iZiI6MTU3NDA3NjIxNSwiZXhwIjoxNTc0MTYyNjE1LCJpYXQiOjE1NzQwNzYyMTUsImlzcyI6IkV4ZW1wbG9Jc3N1ZXIiLCJhdWQiOiJFeGVtcGxvQXVkaWVuY2UifQ.APVh2kuEQ3-DHSMAmKJGA9ngKPZ7icOkajajZHMSWa_DAkLivB8EH4Kiz11UqVIUpFLg4Eq9ggovsluHVV55wtdzDkkPynd6JW1sCrlWL9HSPlqjkV4Vk-FgDUr2v11U7iHg2OSs6yN9HhIQOHb03eTpH5JcW2td47guGbB2qztPZLPG8xLaByYeexWdhGtXH229olnPmQeTzhQzsXc7Sf-YRIuJUVv7-0VZM2Wr-VkJZuyblSYZJM-054AKWo7vYPS1ijmKMQYORdMRK3OkSJNBvT9nHYOIuqAbk6cTF5udqjjzz0eRC6y7FYcVQ8sQGJ63bz2d4JoapSH-U1Z-Ag",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "mileniotech.com.br/v1/GetPerfilVelocidadesRadar?VelocidadeMin=1&VelocidadeMax=50",
+					"host": [
+						"mileniotech",
+						"com",
+						"br"
+					],
+					"path": [
+						"v1",
+						"GetPerfilVelocidadesRadar"
+					],
+					"query": [
+						{
+							"key": "VelocidadeMin",
+							"value": "1"
+						},
+						{
+							"key": "VelocidadeMax",
+							"value": "50"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "mileniotech.com.br/v1/GetTrajetos?Radares=6707&DataConsulta=2019-02-28",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6WyJtYXJjZWxvZ2FuZG9AZ21haWwuY29tIiwibWFyY2Vsb2dhbmRvQGdtYWlsLmNvbSJdLCJqdGkiOiJhYzYwMDFhMmZkMzU0N2U1ODRmMTc4M2M4NTkzZTk2NSIsIm5iZiI6MTU3NDA3NjIxNSwiZXhwIjoxNTc0MTYyNjE1LCJpYXQiOjE1NzQwNzYyMTUsImlzcyI6IkV4ZW1wbG9Jc3N1ZXIiLCJhdWQiOiJFeGVtcGxvQXVkaWVuY2UifQ.APVh2kuEQ3-DHSMAmKJGA9ngKPZ7icOkajajZHMSWa_DAkLivB8EH4Kiz11UqVIUpFLg4Eq9ggovsluHVV55wtdzDkkPynd6JW1sCrlWL9HSPlqjkV4Vk-FgDUr2v11U7iHg2OSs6yN9HhIQOHb03eTpH5JcW2td47guGbB2qztPZLPG8xLaByYeexWdhGtXH229olnPmQeTzhQzsXc7Sf-YRIuJUVv7-0VZM2Wr-VkJZuyblSYZJM-054AKWo7vYPS1ijmKMQYORdMRK3OkSJNBvT9nHYOIuqAbk6cTF5udqjjzz0eRC6y7FYcVQ8sQGJ63bz2d4JoapSH-U1Z-Ag",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "mileniotech.com.br/v1/GetTrajetos?Radares=6707&DataConsulta=2019-02-28",
+					"host": [
+						"mileniotech",
+						"com",
+						"br"
+					],
+					"path": [
+						"v1",
+						"GetTrajetos"
+					],
+					"query": [
+						{
+							"key": "Radares",
+							"value": "6707"
+						},
+						{
+							"key": "DataConsulta",
+							"value": "2019-02-28"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "mileniotech.com.br/v1/GetVelocidadeMediaTrajeto?Radares=6707&DataConsulta=2019-02-28",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6WyJtYXJjZWxvZ2FuZG9AZ21haWwuY29tIiwibWFyY2Vsb2dhbmRvQGdtYWlsLmNvbSJdLCJqdGkiOiJhYzYwMDFhMmZkMzU0N2U1ODRmMTc4M2M4NTkzZTk2NSIsIm5iZiI6MTU3NDA3NjIxNSwiZXhwIjoxNTc0MTYyNjE1LCJpYXQiOjE1NzQwNzYyMTUsImlzcyI6IkV4ZW1wbG9Jc3N1ZXIiLCJhdWQiOiJFeGVtcGxvQXVkaWVuY2UifQ.APVh2kuEQ3-DHSMAmKJGA9ngKPZ7icOkajajZHMSWa_DAkLivB8EH4Kiz11UqVIUpFLg4Eq9ggovsluHVV55wtdzDkkPynd6JW1sCrlWL9HSPlqjkV4Vk-FgDUr2v11U7iHg2OSs6yN9HhIQOHb03eTpH5JcW2td47guGbB2qztPZLPG8xLaByYeexWdhGtXH229olnPmQeTzhQzsXc7Sf-YRIuJUVv7-0VZM2Wr-VkJZuyblSYZJM-054AKWo7vYPS1ijmKMQYORdMRK3OkSJNBvT9nHYOIuqAbk6cTF5udqjjzz0eRC6y7FYcVQ8sQGJ63bz2d4JoapSH-U1Z-Ag",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "mileniotech.com.br/v1/GetVelocidadeMediaTrajeto?Radares=6707&DataConsulta=2019-02-28",
+					"host": [
+						"mileniotech",
+						"com",
+						"br"
+					],
+					"path": [
+						"v1",
+						"GetVelocidadeMediaTrajeto"
+					],
+					"query": [
+						{
+							"key": "Radares",
+							"value": "6707"
+						},
+						{
+							"key": "DataConsulta",
+							"value": "2019-02-28"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "mileniotech.com.br/v1/GetViagens?Radares=6707&DataConsulta=2019-02-28",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6WyJtYXJjZWxvZ2FuZG9AZ21haWwuY29tIiwibWFyY2Vsb2dhbmRvQGdtYWlsLmNvbSJdLCJqdGkiOiJhYzYwMDFhMmZkMzU0N2U1ODRmMTc4M2M4NTkzZTk2NSIsIm5iZiI6MTU3NDA3NjIxNSwiZXhwIjoxNTc0MTYyNjE1LCJpYXQiOjE1NzQwNzYyMTUsImlzcyI6IkV4ZW1wbG9Jc3N1ZXIiLCJhdWQiOiJFeGVtcGxvQXVkaWVuY2UifQ.APVh2kuEQ3-DHSMAmKJGA9ngKPZ7icOkajajZHMSWa_DAkLivB8EH4Kiz11UqVIUpFLg4Eq9ggovsluHVV55wtdzDkkPynd6JW1sCrlWL9HSPlqjkV4Vk-FgDUr2v11U7iHg2OSs6yN9HhIQOHb03eTpH5JcW2td47guGbB2qztPZLPG8xLaByYeexWdhGtXH229olnPmQeTzhQzsXc7Sf-YRIuJUVv7-0VZM2Wr-VkJZuyblSYZJM-054AKWo7vYPS1ijmKMQYORdMRK3OkSJNBvT9nHYOIuqAbk6cTF5udqjjzz0eRC6y7FYcVQ8sQGJ63bz2d4JoapSH-U1Z-Ag",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "mileniotech.com.br/v1/GetViagens?Radares=6707&DataConsulta=2019-02-28",
+					"host": [
+						"mileniotech",
+						"com",
+						"br"
+					],
+					"path": [
+						"v1",
+						"GetViagens"
+					],
+					"query": [
+						{
+							"key": "Radares",
+							"value": "6707"
+						},
+						{
+							"key": "DataConsulta",
+							"value": "2019-02-28"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "mileniotech.com.br/v1/GetDistanciaViagem?DataConsulta=2019-02-28",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6WyJtYXJjZWxvZ2FuZG9AZ21haWwuY29tIiwibWFyY2Vsb2dhbmRvQGdtYWlsLmNvbSJdLCJqdGkiOiJhYzYwMDFhMmZkMzU0N2U1ODRmMTc4M2M4NTkzZTk2NSIsIm5iZiI6MTU3NDA3NjIxNSwiZXhwIjoxNTc0MTYyNjE1LCJpYXQiOjE1NzQwNzYyMTUsImlzcyI6IkV4ZW1wbG9Jc3N1ZXIiLCJhdWQiOiJFeGVtcGxvQXVkaWVuY2UifQ.APVh2kuEQ3-DHSMAmKJGA9ngKPZ7icOkajajZHMSWa_DAkLivB8EH4Kiz11UqVIUpFLg4Eq9ggovsluHVV55wtdzDkkPynd6JW1sCrlWL9HSPlqjkV4Vk-FgDUr2v11U7iHg2OSs6yN9HhIQOHb03eTpH5JcW2td47guGbB2qztPZLPG8xLaByYeexWdhGtXH229olnPmQeTzhQzsXc7Sf-YRIuJUVv7-0VZM2Wr-VkJZuyblSYZJM-054AKWo7vYPS1ijmKMQYORdMRK3OkSJNBvT9nHYOIuqAbk6cTF5udqjjzz0eRC6y7FYcVQ8sQGJ63bz2d4JoapSH-U1Z-Ag",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "mileniotech.com.br/v1/GetDistanciaViagem?DataConsulta=2019-02-28",
+					"host": [
+						"mileniotech",
+						"com",
+						"br"
+					],
+					"path": [
+						"v1",
+						"GetDistanciaViagem"
+					],
+					"query": [
+						{
+							"key": "Radares",
+							"value": "6707",
+							"disabled": true
+						},
+						{
+							"key": "DataConsulta",
+							"value": "2019-02-28"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "mileniotech.com.br/api/Login/GetToken?email=marcelogando@gmail.com&senha=55808026aA@",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "mileniotech.com.br/v1/Login/GetToken?email=marcelogando@gmail.com&senha=55808026aA@",
+					"host": [
+						"mileniotech",
+						"com",
+						"br"
+					],
+					"path": [
+						"v1",
+						"Login",
+						"GetToken"
+					],
+					"query": [
+						{
+							"key": "email",
+							"value": "marcelogando@gmail.com"
+						},
+						{
+							"key": "senha",
+							"value": "55808026aA@"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ec2-52-90-7-220.compute-1.amazonaws.com/predict?id_radar=6955&ano=2018&mes=2&dia=6&hora=15&minuto=9&velocidade_maxima=50&chuva=1",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "ec2-52-90-7-220.compute-1.amazonaws.com/predict?id_radar=6955&ano=2018&mes=2&dia=6&hora=15&minuto=9&velocidade_maxima=50&chuva=1",
+					"host": [
+						"ec2-52-90-7-220",
+						"compute-1",
+						"amazonaws",
+						"com"
+					],
+					"path": [
+						"predict"
+					],
+					"query": [
+						{
+							"key": "id_radar",
+							"value": "6955"
+						},
+						{
+							"key": "ano",
+							"value": "2018"
+						},
+						{
+							"key": "mes",
+							"value": "2"
+						},
+						{
+							"key": "dia",
+							"value": "6"
+						},
+						{
+							"key": "hora",
+							"value": "15"
+						},
+						{
+							"key": "minuto",
+							"value": "9"
+						},
+						{
+							"key": "velocidade_maxima",
+							"value": "50"
+						},
+						{
+							"key": "chuva",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}

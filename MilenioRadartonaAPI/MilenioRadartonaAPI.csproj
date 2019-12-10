@@ -1,0 +1,35 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
+    <UserSecretsId>b834495a-5999-481c-9ce5-5ad8c071bdce</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>
+  </PropertyGroup>
+
+
+  <ItemGroup>
+    <PackageReference Include="AWSSDK.Extensions.NETCore.Setup" Version="3.3.100.1" />
+    <PackageReference Include="AWSSDK.Polly" Version="3.3.103.18" />
+    <PackageReference Include="AWSSDK.S3" Version="3.3.109" />
+    <PackageReference Include="AWSSDK.SQS" Version="3.3.102.39" />
+    <PackageReference Include="McMaster.AspNetCore.LetsEncrypt" Version="0.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.9.5" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.4" />
+    <PackageReference Include="MongoDB.Bson" Version="2.9.3" />
+    <PackageReference Include="MongoDB.Driver" Version="2.9.3" />
+    <PackageReference Include="Sendgrid" Version="9.12.0" />
+    <PackageReference Include="Npgsql" Version="4.1.1" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="2.2.0" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <None Include="wwwroot\front-libs\lightbox2-master\.github\ISSUE_TEMPLATE.md" />
+    <None Include="wwwroot\front-libs\lightbox2-master\.github\PULL_REQUEST_TEMPLATE.md" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,246 @@
+﻿@{
+    ViewData["Title"] = "Tutorial";
+}
+
+
+<div class="quad"></div>
+<div class="quad2"></div>
+<div class="quad4">
+    <div class="container-fluid">
+        <div class="row">
+            <div id="cont-prod" class="col-12">
+                <figure id="quad4-fig" class="col-6 zoom">
+                    <img id="prod-img" src="~/images/car/tuto.png" width="100%" height="100%" class="figure-img img-fluid" alt="works">
+                </figure>
+                <div id="quad4-links" class="col-4">
+                    <a href="html/wedding.html" id="wd" class="nav-link">Weddings</a>
+                    <a href="html/photobooks.html" id="bk" class="nav-link">Photo Books</a>
+                    <a href="html/videoclips.html" id="vc" class="nav-link">Video Clips</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="carrinho" class="container-fluid w-100 p-0">
+    <div id="carouselExampleFade" class="carousel slide carousel-fade" data-ride="carousel">
+        <div class="carousel-inner">
+            <div id="carrinhoTuto" class="carousel-item active">
+                <div id="quad3-img1" class="quad3"></div>
+                <img class="car-img" src="~/images/car/api-car-iron.png">
+                <img class="car-listra" src="~/images/car/listra-h.png">
+                <h2 class="h-car">Tutorial</h2>
+                <p class="car">Veja como acessar nossa API</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<main class="container-fluid w-100">
+    <div class="row">
+
+        <div class="container mt-5 mb-5">
+            <div class="row">
+                <div class="col-12 col-sm-12 col-md-12 col-lg-4">
+                    <h5 class="nav-link">1º Passo</h5>
+                    <p>Crie sua conta acessando '<a class="text-dark" asp-area="Identity" asp-page="/Account/Register">Registrar</a>', logo após vc irá ir para a pagina de login da MilenioTech, insira os dados (email e senha), após vc será redirecionado para nossa pagina principal da intranet.</p>
+                </div>
+                <div class="col-12 col-sm-12 col-md-12 col-lg-4">
+                    <h5 class="nav-link">2º Passo</h5>
+                    <p>Na pagina inicial da nossa intranet vá em: 'Gerar Token' e clique, será gerado uma chave para uso do nosso sistema, você poderá vê-la acessando no menu clicando no item de 'Chaves'.</p>
+                </div>
+                <div class="col-12 col-sm-12 col-md-12 col-lg-4">
+                    <h5 class="nav-link">3º Passo</h5>
+                    <p>Copie a Chave que foi gerada para vc e acesse nossos endpoints! Veja mais sobre como acessá-los abaixo.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- BOOKS -->
+        <div class="container-fluid">
+            <div class="col-12 mt-2 mb-3">
+                <h5 class="nav-link">Endpoints</h5>
+            </div>
+            <div class="col-12 mt-2 mb-3">
+                <p style="text-align:center;">Concatene o endereço https://mileniotech.com.br com o endpoint abaixo e parametrize de acordo com a relação descrita.</p>
+            </div>
+            <div class="container mt-12 mb-12">
+                <table class="table table-striped">
+                    <thead class="bg-primary" style="background-color:#112640cc!important;">
+                        <tr>
+                            <th class="text-center text-light" scope="col" style="font-family:'Lato', sans-serif">#</th>
+                            <th class="text-center text-light" scope="col" style="font-family:'Lato', sans-serif">Endpoint</th>
+                            <th class="text-center text-light" scope="col" style="font-family:'Lato', sans-serif;">Descrição</th>
+                            <th class="text-center text-light" scope="col" style="font-family:'Lato', sans-serif;">Parâmetros</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        <tr>
+                            <td style="font-family:'Lato', sans-serif;">1</td>
+                            <td class="text-center" scope="row" style="font-family:'Lato', sans-serif;">/v1/Login/GetToken</td>
+                            <td class="text-center" scope="row" style="font-family:'Lato', sans-serif;">Gera o token OAuth que é persistido por 1 dia para a autenticação via Bearer Token na API</td>
+                            <td class="text-center" scope="row" style="font-family:'Lato', sans-serif;">string email: E-mail utilizado no cadastro do usuário <br />string senha: Senha utilizada no cadastro do usuário</td>
+                        </tr>
+                        <tr>
+                            <td style="font-family:'Lato', sans-serif;">2</td>
+                            <td class="text-center" scope="row" style="font-family:'Lato', sans-serif;">/v1/GetLocalizacaoRadares</td>
+                            <td class="text-center" scope="row" style="font-family:'Lato', sans-serif;">Todos os radares cadastrados</td>
+                            <td class="text-center" scope="row" style="font-family:'Lato', sans-serif;">N/A</td>
+                        </tr>
+                        <tr>
+                            <td style="font-family:'Lato', sans-serif;">3</td>
+                            <td class="text-center" scope="row" style="font-family:'Lato', sans-serif;">/v1/GetRadaresTipoEnquadramento</td>
+                            <td class="text-center" scope="row" style="font-family:'Lato', sans-serif;">Radares por tipo de enquadramento</td>
+                            <td class="text-center" scope="row" style="font-family:'Lato', sans-serif;">
+                                string Enquadramento: enquadramentos separados por vírgula.
+                                Valores possíveis: R; F; A; P; VER; V; Z; PR; C; EX; VR; MOTO; CP;
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="font-family:'Lato', sans-serif;">4</td>
+                            <td class="text-center" scope="row" style="font-family:'Lato', sans-serif;">/v1/GetRadaresZonaConcessao</td>
+                            <td class="text-center" scope="row" style="font-family:'Lato', sans-serif;">Get de radares por zona de concessão</td>
+                            <td class="text-center" scope="row" style="font-family:'Lato', sans-serif;">string ZonaConcessao: zona de concessão do radar</td>
+                        </tr>
+                        <tr>
+                            <td style="font-family:'Lato', sans-serif;">5</td>
+                            <td class="text-center" scope="row" style="font-family:'Lato', sans-serif;">/v1/GetFluxoVeiculosRadares</td>
+                            <td class="text-center" scope="row" style="font-family:'Lato', sans-serif;">Fluxo de veículos de cada radar, em um determinado dia</td>
+                            <td class="text-center" scope="row" style="font-family:'Lato', sans-serif;">
+                                string Radares: código dos radares a serem consultados, separados por vírgula<br />
+                                string DataConsulta: Data de consulta, que varia de d0 até datas anteriores (padrão yyyy-MM-dd)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="font-family:'Lato', sans-serif;">6</td>
+                            <td class="text-center" scope="row" style="font-family:'Lato', sans-serif;">/v1/GetTipoVeiculosRadares</td>
+                            <td class="text-center" scope="row" style="font-family:'Lato', sans-serif;">Tipo de veículos que passaram pelos radares, em um determinado dia</td>
+                            <td class="text-center" scope="row" style="font-family:'Lato', sans-serif;">
+                                string Radares: código dos radares a serem consultados, separados por vírgula<br />
+                                string DataConsulta: Data de consulta, que varia de d0 até datas anteriores (padrão yyyy-MM-dd)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="font-family:'Lato', sans-serif;">7</td>
+                            <td class="text-center" scope="row" style="font-family:'Lato', sans-serif;">/v1/GetInfracoesRadares</td>
+                            <td class="text-center" scope="row" style="font-family:'Lato', sans-serif;">Número de infrações em radares, em um determinado dia</td>
+                            <td class="text-center" scope="row" style="font-family:'Lato', sans-serif;">
+                                string Radares: código dos radares a serem consultados, separados por vírgula<br />
+                                string DataConsulta: Data de consulta, que varia de d0 até datas anteriores (padrão yyyy-MM-dd)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="font-family:'Lato', sans-serif;">8</td>
+                            <td class="text-center" scope="row" style="font-family:'Lato', sans-serif;">/v1/GetAcuraciaIdentificacaoRadares</td>
+                            <td class="text-center" scope="row" style="font-family:'Lato', sans-serif;">Acurácia de identificação de placas dos radares, em um determinado dia</td>
+                            <td class="text-center" scope="row" style="font-family:'Lato', sans-serif;">
+                                string Radares: código dos radares a serem consultados, separados por vírgula<br />
+                                string DataConsulta: Data de consulta, que varia de d0 até datas anteriores (padrão yyyy-MM-dd)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="font-family:'Lato', sans-serif;">9</td>
+                            <td class="text-center" scope="row" style="font-family:'Lato', sans-serif;">/v1/GetPerfilVelocidadesRadar</td>
+                            <td class="text-center" scope="row" style="font-family:'Lato', sans-serif;">Radares, por perfil de velocidade (mínima e máxima)</td>
+                            <td class="text-center" scope="row" style="font-family:'Lato', sans-serif;">
+                                int VelocidadeMin: velocidade mínima do radar a ser consultada<br />
+                                int VelocidadeMax: velocidade máxima do radar a ser consultada
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="font-family:'Lato', sans-serif;">10</td>
+                            <td class="text-center" scope="row" style="font-family:'Lato', sans-serif;">/v1/GetTrajetos</td>
+                            <td class="text-center" scope="row" style="font-family:'Lato', sans-serif;">(FEATURE) Velocidades médias detectadas nos radares, separados por período de manha, tarde, noite e madrugada</td>
+                            <td class="text-center" scope="row" style="font-family:'Lato', sans-serif;">
+                                string Radares: código dos radares a serem consultados, separados por vírgula<br />
+                                string DataConsulta: Data de consulta, que varia de d0 até datas anteriores (padrão yyyy-MM-dd)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="font-family:'Lato', sans-serif;">11</td>
+                            <td class="text-center" scope="row">/v1/GetVelocidadeMediaTrajeto</td>
+                            <td class="text-center" scope="row">(FEATURE) Velocidade média dos trajetos executados no dia</td>
+                            <td class="text-center" scope="row">
+                                string Radares: código dos radares a serem consultados, separados por vírgula<br />
+                                string DataConsulta: Data de consulta, que varia de d0 até datas anteriores (padrão yyyy-MM-dd)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="font-family:'Lato', sans-serif;">12</td>
+                            <td class="text-center" scope="row" style="font-family:'Lato', sans-serif;">/v1/GetViagens</td>
+                            <td class="text-center" scope="row" style="font-family:'Lato', sans-serif;">Todas as viagens ocorridas no dia, em todos os radares</td>
+                            <td class="text-center" scope="row" style="font-family:'Lato', sans-serif;">
+                                string Radares: código dos radares a serem consultados, separados por vírgula.<br />
+                                string DataConsulta: Data de consulta, que varia de d0 até datas anteriores (padrão yyyy-MM-dd)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="font-family:'Lato', sans-serif;">13</td>
+                            <td class="text-center" scope="row" style="font-family:'Lato', sans-serif;">/v1/GetDistanciaViagem</td>
+                            <td class="text-center" scope="row" style="font-family:'Lato', sans-serif;">Distância de todas as viagens ocorridas no dia, por diferença de distância entre os radares</td>
+                            <td class="text-center" scope="row" style="font-family:'Lato', sans-serif;">string DataConsulta: Data de consulta, que varia de d0 até datas anteriores (padrão yyyy-MM-dd)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="container-fluid">
+            <div class="col-12 mt-2 mb-3">
+                <h5 class="nav-link">Endpoints de predição</h5>
+            </div>
+            <div class="col-12 mt-2 mb-3">
+                <p style="text-align:center;">Utilize o método GET no endereço especificado. Concatenar o endpoint com http://ec2-52-90-7-220.compute-1.amazonaws.com</p>
+            </div>
+            <div class="container mt-12 mb-12">
+                <table class="table table-striped">
+                    <thead class="bg-primary" style="background-color:#112640cc!important;">
+                        <tr>
+                            <th class="text-center text-light" scope="col" style="font-family:'Lato', sans-serif">#</th>
+                            <th class="text-center text-light" scope="col" style="font-family:'Lato', sans-serif">Endpoint</th>
+                            <th class="text-center text-light" scope="col" style="font-family:'Lato', sans-serif;">Descrição</th>
+                            <th class="text-center text-light" scope="col" style="font-family:'Lato', sans-serif;">Parâmetros</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="font-family:'Lato', sans-serif;">1</td>
+                            <td class="text-center" scope="row" style="font-family:'Lato', sans-serif;">/predict</td>
+                            <td class="text-center" scope="row" style="font-family:'Lato', sans-serif;">Obtém a predição de velocidade com base em radar, horário e clima</td>
+                            <td class="text-center" scope="row" style="font-family:'Lato', sans-serif;">integer id_radar: Identificação do radar<br />
+                            integer ano: Ano de predição<br />
+                            integer mes: Mês de predição<br />
+                            integer dia: Dia de predição<br />
+                            integer hora: Hora de predição<br />
+                            integer minuto: Minuto de predição<br />
+                            integer velocidade_maxima: Velocidade máxima permitida na via<br />
+                            integer chuva: Booleano para se está chovendo</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- Tournament -->
+        <div class="container-fluid news-1"></div>
+        <div class="container mb-5">
+            <div class="row">
+                <div class="col-12 col-sm-12 col-md-12 col-lg-12">
+                    <h5 class="nav-link mt-3 mb-3">Dúvidas ou sugestões? Manda um e-mail! :)</h5>
+                </div>
+                <div class="col-12 col-sm-12 col-md-12 col-lg-12">
+                    <p style="text-align:center;">contato@mileniobus.com.br</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</main>
+
+
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+
+<!-- Optional JavaScript -->
+<script type="text/javascript" src="~/javascript/jquery-funcoes.js"></script>
