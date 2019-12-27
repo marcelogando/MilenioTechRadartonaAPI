@@ -313,20 +313,8 @@ namespace Service
         {
             try
             {
-                var retornoInicial = _rep.GetDistanciaViagem(radarInicial, radarFinal);
-
-
-                List<DistanciaViagemDTO> retorno = new List<DistanciaViagemDTO>();
-
-                foreach (MilenioRadartonaAPI.Models.DistanciaViagem fvr in retornoInicial)
-                {
-                    List<DistanciaViagemDTO> viagens = JsonConvert.DeserializeObject<List<DistanciaViagemDTO>>(fvr.JsonRetorno);
-                    foreach (DistanciaViagemDTO viagem in viagens)
-                    {
-                        retorno.Add(viagem);
-                    }
-                }
-
+                List<DistanciaViagemDTO> retorno = _rep.GetDistanciaViagem(radarInicial, radarFinal);
+                
                 return retorno;
             }
             catch (Exception e)

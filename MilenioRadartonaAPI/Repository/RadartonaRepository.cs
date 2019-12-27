@@ -27,7 +27,7 @@ namespace MilenioRadartonaAPI.Repository
         List<TrajetosDTO> GetTrajetos(string[] radares, string dataConsulta);
         List<VelocidadeMediaTrajetoDTO> GetVelocidadeMediaTrajeto(string dataConsulta, string[] radares);
         List<ViagensDTO> GetViagens(string dataConsulta, string[] Radares);
-        List<Models.DistanciaViagem> GetDistanciaViagem(int radarInicio, int radarFinal);
+        List<DistanciaViagemDTO> GetDistanciaViagem(int radarInicio, int radarFinal);
 
         Task LogRequest(string Usuario, string Endpoint, long TempoRequisicao);
 
@@ -369,15 +369,43 @@ namespace MilenioRadartonaAPI.Repository
             return lstRetorno;
         }
 
-        public List<Models.DistanciaViagem> GetDistanciaViagem(int radarInicio, int radarFinal)
+        public List<DistanciaViagemDTO> GetDistanciaViagem(int radarInicio, int radarFinal)
         {
-            List<Models.DistanciaViagem> lista = new List<Models.DistanciaViagem>();
+            List<DistanciaViagemDTO> listaRetorno = new List<DistanciaViagemDTO>();
 
-            var achado = _ctxView.DistanciaViagem.Where(k => k.RadarInicial == radarInicio && k.RadarFinal == radarFinal).FirstOrDefault();
-            lista.Add(achado);
-            
-            return lista;
+            using (Npgsql.NpgsqlConnection conn = new Npgsql.NpgsqlConnection(connString))
+            {
+                Npgsql.NpgsqlCommand comm = conn.CreateCommand();
+                comm.CommandTimeout = 420;
+
+                comm.CommandType = CommandType.Text;
+                comm.CommandText =
+                    "select br0.codigo as RadarInicio, " +
+                    "br1.codigo as RadarFinal, " +
+                    "ST_Distance(ST_Transform(concat('SRID=4326;POINT(', cast(br0.lat as varchar(20)), ' ', cast(br0.lon as varchar(20)), ')')::geometry, 3857), " +
+                    "ST_Transform(concat('SRID=4326;POINT(', cast(br1.lat as varchar(20)), ' ', cast(br1.lon as varchar(20)), ')')::geometry, 3857)) * cosd(42.3521) as distancia " +
+                    "from base_radares_lat_lon br0 inner join base_radares_lat_lon br1 " +
+                    "on br1.codigo = " + radarFinal + " where br0.codigo = " + radarInicio + "; ";
+
+                conn.Open();
+
+                Npgsql.NpgsqlDataReader dr = comm.ExecuteReader();
+
+                while (dr.Read())
+                {
+                    DistanciaViagemDTO ett = new DistanciaViagemDTO();
+
+                    ett.codigoRadarInicio = Convert.ToInt32(dr["RadarInicio"]);
+                    ett.codigoRadarFinal = Convert.ToInt32(dr["RadarFinal"]);
+                    ett.distancia = Convert.ToDecimal(dr["distancia"]);
+
+                    listaRetorno.Add(ett);
+                }
+            }
+
+            return listaRetorno;
         }
+
 
         // ===== FUNCOES ========
         public async Task LogRequest(string Usuario, string Endpoint, long TempoRequisicao)
