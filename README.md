@@ -10,7 +10,7 @@ O concurso para Solução API tem o seguinte desafio: “Como organizar os dados
 
 Nosso projeto visa solucionar o desafio, trazendo visibilidade e estruturação dos dados para utilidade pública. Além da consulta na API com retorno XML/JSON, temos a opção de exportar os resultados obtidos para arquivo CSV.
 
-- Slides - [Clique aqui](https://github.com/marcelogando/RadartonaAPI/blob/master/MilenioRadartonaAPI/Presentation/api.pdf).
+- Slides - [Clique aqui](/MilenioRadartonaAPI/Presentation/Finaaaaaaal.pdf).
 
 ## Pré-requisitos
 
