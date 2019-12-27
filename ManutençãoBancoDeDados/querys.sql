@@ -10,8 +10,10 @@ DROP INDEX contagens_data_e_hora_localidade
 CREATE INDEX BaseRadares_codigo ON public."BaseRadares" (codigo);
 
 -- trajetos
+-- t.viagem_id, "codigoRadarOrigem", "periodoDia", "codigoRadarDestino"
 CREATE INDEX trajetos_origem_destino ON public.trajetos (origem, destino, data_inicio);
-DROP INDEX trajetos_origem_destino
+CREATE INDEX trajetos_proc ON public.trajetos (viagem_id, origem, destino);
+DROP INDEX trajetos_proc
 
 CREATE INDEX trajetos_origem_data_inicio ON public.trajetos (origem, data_inicio);
 CREATE INDEX trajetos_destino_data_inicio ON public.trajetos (destino, data_inicio);
@@ -19,6 +21,8 @@ CREATE INDEX trajetos_destino_data_inicio ON public.trajetos (destino, data_inic
 -- viagens
 CREATE INDEX viagens_inicio_data_inicio ON public.viagens (inicio, data_inicio);
 CREATE INDEX viagens_final_data_inicio ON public.viagens (final, data_inicio);
+
+CREATE INDEX viagens_proc ON public.viagens (id, inicio, data_inicio, final, data_final, tipo);
 
 -- PRÉ EXISTENTES
 CREATE INDEX idx_data ON public.trajetos USING btree (data_inicio, data_final);
@@ -584,14 +588,14 @@ $BODY$ language plpgsql
 -- NOTE: ESTA BASE NÃO ESTÁ SENDO USADA, ROTA ESTÁ FUNCIONANDO COMO ESTAVA ANTES
 
 -- Trajetos
--- TEMPO DE EXECUÇÃO PARA DIA 2018-02-01: x segundos
+-- TEMPO DE EXECUÇÃO PARA DIA 2018-02-02: 12 minutos
 DO
 $BODY$
 DECLARE
 	l integer;
     j json;
-	DataConsulta TIMESTAMP = '2019-02-01';
-	UltimaDataConsulta TIMESTAMP = '2019-02-28';
+	DataConsulta TIMESTAMP = '2018-02-02';
+	UltimaDataConsulta TIMESTAMP = '2018-02-02';
 	arr integer[];
 BEGIN
 	arr := ARRAY(SELECT DISTINCT(localidade) FROM public.contagens);
@@ -635,8 +639,8 @@ $BODY$
 DECLARE
 	l integer;
     j json;
-	DataConsulta TIMESTAMP = '2019-02-01';
-	UltimaDataConsulta TIMESTAMP = '2019-02-28';
+	DataConsulta TIMESTAMP = '2018-02-01';
+	UltimaDataConsulta TIMESTAMP = '2018-02-01';
 	arr integer[];
 BEGIN
 	arr := ARRAY(SELECT DISTINCT(localidade) FROM public.contagens);
@@ -658,7 +662,7 @@ BEGIN
 				from trajetos t
 				where data_inicio between (DataConsulta + time '00:00:00') and (DataConsulta + time '23:59:59')
 				and (t.origem = l or t.destino = l)
-				group by t.viagem_id, "codigoRadarOrigem", "periodoDia", "codigoRadarDestino"
+				group by t.viagem_id, "codigoRadarOrigem", "codigoRadarDestino", "periodoDia"
 			) r);
 			INSERT INTO camadavisualizacao."VelocidadeMediaTrajeto" ("Radares","DataConsulta","JsonRetorno") VALUES (l, DataConsulta, j);
 -- 			EXIT;
@@ -671,13 +675,14 @@ END;
 $BODY$ language plpgsql	
 
 -- Viagens
+-- tempo p rodar dia 2019-02-01: 12 minutos
 DO
 $BODY$
 DECLARE
 	l integer;
     j json;
 	DataConsulta TIMESTAMP = '2019-02-01';
-	UltimaDataConsulta TIMESTAMP = '2019-02-28';
+	UltimaDataConsulta TIMESTAMP = '2019-02-01';
 	arr integer[];
 BEGIN
 	arr := ARRAY(SELECT DISTINCT(localidade) FROM public.contagens);
@@ -687,13 +692,10 @@ BEGIN
 		LOOP
 			j := (SELECT json_agg(r)								   
 			FROM (
--- 				select id as "viagemId", inicio as "codigoRadarInicio", data_inicio as "dataHoraInicio", final as "codigoRadarFinal", data_final as "dataHoraFinal", tipo as "tipoVeiculo" 
--- 				from viagens where cast(data_inicio as date) = DataConsulta and (inicio = l or final = l)
 				select id as "viagemId", inicio as "codigoRadarInicio", data_inicio as "dataHoraInicio", final as "codigoRadarFinal", data_final as "dataHoraFinal", tipo as "tipoVeiculo" 
 				from viagens where (inicio = l or final = l) and data_inicio between (DataConsulta + time '00:00:00') and (DataConsulta + time '23:59:59')
 			) r);
 			INSERT INTO camadavisualizacao."Viagens" ("Radares","DataConsulta","JsonRetorno") VALUES (l, DataConsulta, j);
-			EXIT;
 			RAISE NOTICE 'Inserção Realizada: (%)[%]', DataConsulta, l;
 		END LOOP;
 		DataConsulta := DataConsulta + INTERVAL '1 day';

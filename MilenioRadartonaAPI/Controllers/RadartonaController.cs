@@ -295,7 +295,7 @@ namespace MilenioRadartonaAPI.Controllers
                 {
                     var watch = new Stopwatch();
                     watch.Start();
-                    List<DTO.Trajeto> lstRetorno = _serv.GetTrajetos(DataConsulta, Radares);
+                    List<TrajetosDTO> lstRetorno = _serv.GetTrajetos(DataConsulta, Radares);
                     watch.Stop();
                     var TempoRequisicao = watch.ElapsedMilliseconds;
 
@@ -327,7 +327,7 @@ namespace MilenioRadartonaAPI.Controllers
                 {
                     var watch = new Stopwatch();
                     watch.Start();
-                    List<TrajetoVelocidadeMedia> lstRetorno = _serv.GetVelocidadeMediaTrajeto(DataConsulta, Radares);
+                    List<VelocidadeMediaTrajetoDTO> lstRetorno = _serv.GetVelocidadeMediaTrajeto(DataConsulta, Radares);
                     watch.Stop();
                     var TempoRequisicao = watch.ElapsedMilliseconds;
 

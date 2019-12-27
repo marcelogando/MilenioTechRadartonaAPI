@@ -22,8 +22,8 @@ namespace Service
         List<BaseRadaresJoinContagemPequenoDTO2> GetInfracoesPorRadar(string Radares, string DataConsulta);
         List<BaseRadaresJoinContagemPequenoDTO3> GetAcuraciaIdentificacaoRadares(string Radares, string DataConsulta);
         List<BaseRadaresDTO> GetPerfilVelocidadesRadar(int VelocidadeMin, int VelocidadeMax);
-        List<Trajeto> GetTrajetos(string DataConsulta, string Radares);
-        List<TrajetoVelocidadeMedia> GetVelocidadeMediaTrajeto(string DataConsulta, string Radares);
+        List<TrajetosDTO> GetTrajetos(string DataConsulta, string Radares);
+        List<VelocidadeMediaTrajetoDTO> GetVelocidadeMediaTrajeto(string DataConsulta, string Radares);
         List<ViagensDTO> GetViagens(string DataConsulta, string Radares);
         List<DistanciaViagemDTO> GetDistanciaViagem(int radarInicial, int radarFinal);
         Task LogRequest(string Usuario, string Endpoint, long TempoRequisicao);
@@ -240,24 +240,24 @@ namespace Service
             }
         }
 
-        public List<Trajeto> GetTrajetos(string DataConsulta, string Radares)
+        public List<TrajetosDTO> GetTrajetos(string DataConsulta, string Radares)
         {
             string[] lstRadares = Radares.Split(",");
             try
             {
-                var retornoInicial = _rep.GetTrajetos(lstRadares, DataConsulta);
+                return _rep.GetTrajetos(lstRadares, DataConsulta);
 
-                List<MilenioRadartonaAPI.DTO.Trajeto> retorno = new List<MilenioRadartonaAPI.DTO.Trajeto>();
-                foreach (MilenioRadartonaAPI.Models.Trajetos fvr in retornoInicial)
-                {
-                    List<Trajeto> radares = JsonConvert.DeserializeObject<List<Trajeto>>(fvr.JsonRetorno);
-                    foreach (Trajeto radar in radares)
-                    {
-                        retorno.Add(radar);
-                    }
-                }
+                //List<MilenioRadartonaAPI.DTO.Trajeto> retorno = new List<MilenioRadartonaAPI.DTO.Trajeto>();
+                //foreach (MilenioRadartonaAPI.Models.Trajetos fvr in retornoInicial)
+                //{
+                //    List<Trajeto> radares = JsonConvert.DeserializeObject<List<Trajeto>>(fvr.JsonRetorno);
+                //    foreach (Trajeto radar in radares)
+                //    {
+                //        retorno.Add(radar);
+                //    }
+                //}
 
-                return retorno;
+                //return retorno;
             }
             catch (Exception e)
             {
@@ -266,22 +266,24 @@ namespace Service
 
         }
 
-        public List<TrajetoVelocidadeMedia> GetVelocidadeMediaTrajeto(string DataConsulta, string Radares)
+        public List<VelocidadeMediaTrajetoDTO> GetVelocidadeMediaTrajeto(string DataConsulta, string Radares)
         {
             string[] lstRadares = Radares.Split(",");
             try
             {
-                var retornoInicial = _rep.GetVelocidadeMediaTrajeto(lstRadares, DataConsulta);
 
-                List<TrajetoVelocidadeMedia> retorno = new List<TrajetoVelocidadeMedia>();
-                foreach (MilenioRadartonaAPI.Models.Trajetos fvr in retornoInicial)  // AQUI É OUTRO RETORNO VER QUAL RETORNO
-                {
-                    List<TrajetoVelocidadeMedia> radares = JsonConvert.DeserializeObject<List<TrajetoVelocidadeMedia>>(fvr.JsonRetorno);
-                    foreach (TrajetoVelocidadeMedia radar in radares)
-                    {
-                        retorno.Add(radar);
-                    }
-                }
+                List<VelocidadeMediaTrajetoDTO> retorno = _rep.GetVelocidadeMediaTrajeto(DataConsulta, lstRadares);
+                //var retornoInicial = _rep.GetVelocidadeMediaTrajeto(lstRadares, DataConsulta);
+
+                //List<TrajetoVelocidadeMedia> retorno = new List<TrajetoVelocidadeMedia>();
+                //foreach (MilenioRadartonaAPI.Models.Trajetos fvr in retornoInicial)  // AQUI É OUTRO RETORNO VER QUAL RETORNO
+                //{
+                //    List<TrajetoVelocidadeMedia> radares = JsonConvert.DeserializeObject<List<TrajetoVelocidadeMedia>>(fvr.JsonRetorno);
+                //    foreach (TrajetoVelocidadeMedia radar in radares)
+                //    {
+                //        retorno.Add(radar);
+                //    }
+                //}
 
                 return retorno;
             }
@@ -297,17 +299,7 @@ namespace Service
             string[] lstRadares = Radares.Split(",");
             try
             {
-                var retornoInicial = _rep.GetViagens(lstRadares, DataConsulta);
-
-                List<ViagensDTO> retorno = new List<ViagensDTO>();
-                foreach (MilenioRadartonaAPI.Models.Viagens fvr in retornoInicial)  // AQUI É OUTRO RETORNO VER QUAL RETORNO
-                {
-                    List<ViagensDTO> radares = JsonConvert.DeserializeObject<List<ViagensDTO>>(fvr.JsonRetorno);
-                    foreach (ViagensDTO radar in radares)
-                    {
-                        retorno.Add(radar);
-                    }
-                }
+                List<ViagensDTO> retorno = _rep.GetViagens(DataConsulta, lstRadares);
 
                 return retorno;
             }
