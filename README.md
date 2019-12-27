@@ -22,6 +22,13 @@ Nosso projeto visa solucionar o desafio, trazendo visibilidade e estruturação 
 
 ## Instalação no servidor
 
+Ao instanciar o servidor pela primeira vez, contornar os dados de proxy (caso se aplique) no github e no docker.
+O do docker pode ser contornado a partir do Dockerfile em anexo aqui.
+
+Já o github, contornar a proxy assim:
+git config --global http.proxy http://user:senha@10.10.190.25:3128
+
+
 ```bash
 git clone https://github.com/marcelogando/RadartonaAPI.git
 
@@ -29,7 +36,11 @@ cd RadartonaAPI
 
 sudo docker build -t milenio_tech_api .
 
+(Se tiver SSL, rodar esse)
 sudo docker run --rm -it -d -p 80:80 -p 443:80 --name milenio_tech_api milenio_tech_api -dit --restart unless-stopped
+
+(Se não tiver SSL, rodar esse)
+sudo docker run --rm -it -d -p 80:80 --name milenio_tech_api milenio_tech_api -dit --restart unless-stopped
 ```
 
 ## Testes
