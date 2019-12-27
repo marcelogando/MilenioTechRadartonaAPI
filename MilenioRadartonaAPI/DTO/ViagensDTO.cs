@@ -7,11 +7,11 @@ namespace MilenioRadartonaAPI.DTO
 {
     public class ViagensDTO
     {
-        public int viagemId { get; set; }
-        public int codigoRadarInicio { get; set; }
-        public DateTime dataHoraInicio { get; set; }
-        public int codigoRadarFinal { get; set; }
-        public DateTime dataHoraFinal { get; set; }
-        public int tipoVeiculo { get; set; }
+        public int ViagemId { get; set; }
+        public int CodigoRadarInicio { get; set; }
+        public DateTime DataHoraInicio { get; set; }
+        public int CodigoRadarFinal { get; set; }
+        public DateTime DataHoraFinal { get; set; }
+        public int TipoVeiculo { get; set; }
     }
 }

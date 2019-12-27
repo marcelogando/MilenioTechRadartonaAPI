@@ -2,6 +2,13 @@
     ViewData["Title"] = "Tutorial";
 }
 
+<style>
+
+    td {
+        line-height: 25px;
+    }
+</style>
+
 
 <div class="quad"></div>
 <div class="quad2"></div>
@@ -44,15 +51,15 @@
             <div class="row">
                 <div class="col-12 col-sm-12 col-md-12 col-lg-4">
                     <h5 class="nav-link">1º Passo</h5>
-                    <p>Crie sua conta acessando '<a class="text-dark" asp-area="Identity" asp-page="/Account/Register">Registrar</a>', logo após vc irá ir para a pagina de login da MilenioTech, insira os dados (email e senha), após vc será redirecionado para nossa pagina principal da intranet.</p>
+                    <p>Crie sua conta acessando '<a target="_blank" class="text-dark border-bottom border-dark" asp-area="Identity" asp-page="/Account/Register">Registrar</a>', crie sua conta informando: nome, e-mail, celular e senha, caso já tenha conta na nossa plataforma, acesse <a  target="_blank" class="text-dark border-bottom border-dark" asp-area="Identity" asp-page="/Account/Login">Radares</a> para acessar a nossa página de login, insira os dados (email e senha) e clique em 'Entrar com sua conta', após você será redirecionado para nossa página principal da intranet.</p>
                 </div>
                 <div class="col-12 col-sm-12 col-md-12 col-lg-4">
                     <h5 class="nav-link">2º Passo</h5>
-                    <p>Na pagina inicial da nossa intranet vá em: 'Gerar Token' e clique, será gerado uma chave para uso do nosso sistema, você poderá vê-la acessando no menu clicando no item de 'Chaves'.</p>
+                    <p>Na pagina inicial da nossa intranet vá no menu e clique na opção: 'Token', você verá uma chave para uso do nosso sistema, essa chave tem um limite de uso tendo expiração de um dia, assim que ela expirar basta realizar o login novamente para retomar o acesso a plataforma a partir de outra chave.</p>
                 </div>
                 <div class="col-12 col-sm-12 col-md-12 col-lg-4">
                     <h5 class="nav-link">3º Passo</h5>
-                    <p>Copie a Chave que foi gerada para vc e acesse nossos endpoints! Veja mais sobre como acessá-los abaixo.</p>
+                    <p>Copie a chave que foi gerada e acesse nossos endpoints! Veja mais sobre como acessá-los abaixo. Lembrando que por dia todos os usuários têm um limite de 1000 requisições.</p>
                 </div>
             </div>
         </div>
@@ -81,36 +88,43 @@
                             <td style="font-family:'Lato', sans-serif;">1</td>
                             <td class="text-center" scope="row" style="font-family:'Lato', sans-serif;">/v1/Login/GetToken</td>
                             <td class="text-center" scope="row" style="font-family:'Lato', sans-serif;">Gera o token OAuth que é persistido por 1 dia para a autenticação via Bearer Token na API</td>
-                            <td class="text-center" scope="row" style="font-family:'Lato', sans-serif;">string email: E-mail utilizado no cadastro do usuário <br />string senha: Senha utilizada no cadastro do usuário</td>
+                            <td class="text-center" scope="row" style="font-family:'Lato', sans-serif;">
+                                string: Email - seu email de usuário<br>
+                                string: Senha - sua senha de usuário
+                            </td>
                         </tr>
                         <tr>
                             <td style="font-family:'Lato', sans-serif;">2</td>
                             <td class="text-center" scope="row" style="font-family:'Lato', sans-serif;">/v1/GetLocalizacaoRadares</td>
                             <td class="text-center" scope="row" style="font-family:'Lato', sans-serif;">Todos os radares cadastrados</td>
-                            <td class="text-center" scope="row" style="font-family:'Lato', sans-serif;">N/A</td>
+                            <td class="text-center" scope="row" style="font-family:'Lato', sans-serif;">
+                                
+                            </td>
                         </tr>
                         <tr>
                             <td style="font-family:'Lato', sans-serif;">3</td>
                             <td class="text-center" scope="row" style="font-family:'Lato', sans-serif;">/v1/GetRadaresTipoEnquadramento</td>
                             <td class="text-center" scope="row" style="font-family:'Lato', sans-serif;">Radares por tipo de enquadramento</td>
                             <td class="text-center" scope="row" style="font-family:'Lato', sans-serif;">
-                                string Enquadramento: enquadramentos separados por vírgula.
-                                Valores possíveis: R; F; A; P; VER; V; Z; PR; C; EX; VR; MOTO; CP;
+                                string: Enquadramento - enquadramentos separados por vírgula.
+                                Valores possíveis: R, F, A, P, VER, V, Z, PR, C, EX, VR, MOTO, CP
                             </td>
                         </tr>
                         <tr>
                             <td style="font-family:'Lato', sans-serif;">4</td>
-                            <td class="text-center" scope="row" style="font-family:'Lato', sans-serif;">/v1/GetRadaresZonaConcessao</td>
-                            <td class="text-center" scope="row" style="font-family:'Lato', sans-serif;">Get de radares por zona de concessão</td>
-                            <td class="text-center" scope="row" style="font-family:'Lato', sans-serif;">string ZonaConcessao: zona de concessão do radar</td>
+                            <td class="text-center" scope="row" style="font-family:'Lato', sans-serif;">/v1/GetRadaresLote</td>
+                            <td class="text-center" scope="row" style="font-family:'Lato', sans-serif;">Get de radares por lote</td>
+                            <td class="text-center" scope="row" style="font-family:'Lato', sans-serif;">
+                                int: Lote - lote do radar (1,2,3,4)
+                            </td>
                         </tr>
                         <tr>
                             <td style="font-family:'Lato', sans-serif;">5</td>
                             <td class="text-center" scope="row" style="font-family:'Lato', sans-serif;">/v1/GetFluxoVeiculosRadares</td>
                             <td class="text-center" scope="row" style="font-family:'Lato', sans-serif;">Fluxo de veículos de cada radar, em um determinado dia</td>
                             <td class="text-center" scope="row" style="font-family:'Lato', sans-serif;">
-                                string Radares: código dos radares a serem consultados, separados por vírgula<br />
-                                string DataConsulta: Data de consulta, que varia de d0 até datas anteriores (padrão yyyy-MM-dd)
+                                string: Radares - código dos radares a serem consultados, separados por vírgula<br>
+                                string: DataConsulta - data de consulta, que varia de d0 até datas anteriores (padrão yyyy-MM-dd)
                             </td>
                         </tr>
                         <tr>
@@ -118,8 +132,8 @@
                             <td class="text-center" scope="row" style="font-family:'Lato', sans-serif;">/v1/GetTipoVeiculosRadares</td>
                             <td class="text-center" scope="row" style="font-family:'Lato', sans-serif;">Tipo de veículos que passaram pelos radares, em um determinado dia</td>
                             <td class="text-center" scope="row" style="font-family:'Lato', sans-serif;">
-                                string Radares: código dos radares a serem consultados, separados por vírgula<br />
-                                string DataConsulta: Data de consulta, que varia de d0 até datas anteriores (padrão yyyy-MM-dd)
+                                string: Radares - código dos radares a serem consultados, separados por vírgula<br>
+                                string: DataConsulta - data de consulta, que varia de d0 até datas anteriores (padrão yyyy-MM-dd)
                             </td>
                         </tr>
                         <tr>
@@ -127,8 +141,8 @@
                             <td class="text-center" scope="row" style="font-family:'Lato', sans-serif;">/v1/GetInfracoesRadares</td>
                             <td class="text-center" scope="row" style="font-family:'Lato', sans-serif;">Número de infrações em radares, em um determinado dia</td>
                             <td class="text-center" scope="row" style="font-family:'Lato', sans-serif;">
-                                string Radares: código dos radares a serem consultados, separados por vírgula<br />
-                                string DataConsulta: Data de consulta, que varia de d0 até datas anteriores (padrão yyyy-MM-dd)
+                                string: Radares - código dos radares a serem consultados, separados por vírgula<br>
+                                string: DataConsulta - data de consulta, que varia de d0 até datas anteriores (padrão yyyy-MM-dd)
                             </td>
                         </tr>
                         <tr>
@@ -136,8 +150,8 @@
                             <td class="text-center" scope="row" style="font-family:'Lato', sans-serif;">/v1/GetAcuraciaIdentificacaoRadares</td>
                             <td class="text-center" scope="row" style="font-family:'Lato', sans-serif;">Acurácia de identificação de placas dos radares, em um determinado dia</td>
                             <td class="text-center" scope="row" style="font-family:'Lato', sans-serif;">
-                                string Radares: código dos radares a serem consultados, separados por vírgula<br />
-                                string DataConsulta: Data de consulta, que varia de d0 até datas anteriores (padrão yyyy-MM-dd)
+                                string: Radares - código dos radares a serem consultados, separados por vírgula<br>
+                                string: DataConsulta - data de consulta, que varia de d0 até datas anteriores (padrão yyyy-MM-dd)
                             </td>
                         </tr>
                         <tr>
@@ -145,8 +159,8 @@
                             <td class="text-center" scope="row" style="font-family:'Lato', sans-serif;">/v1/GetPerfilVelocidadesRadar</td>
                             <td class="text-center" scope="row" style="font-family:'Lato', sans-serif;">Radares, por perfil de velocidade (mínima e máxima)</td>
                             <td class="text-center" scope="row" style="font-family:'Lato', sans-serif;">
-                                int VelocidadeMin: velocidade mínima do radar a ser consultada<br />
-                                int VelocidadeMax: velocidade máxima do radar a ser consultada
+                                int: VelocidadeMin - velocidade mínima do radar a ser consultada (1 a 100)<br>
+                                int: VelocidadeMax - velocidade máxima do radar a ser consultada (1 a 100)
                             </td>
                         </tr>
                         <tr>
@@ -154,8 +168,8 @@
                             <td class="text-center" scope="row" style="font-family:'Lato', sans-serif;">/v1/GetTrajetos</td>
                             <td class="text-center" scope="row" style="font-family:'Lato', sans-serif;">(FEATURE) Velocidades médias detectadas nos radares, separados por período de manha, tarde, noite e madrugada</td>
                             <td class="text-center" scope="row" style="font-family:'Lato', sans-serif;">
-                                string Radares: código dos radares a serem consultados, separados por vírgula<br />
-                                string DataConsulta: Data de consulta, que varia de d0 até datas anteriores (padrão yyyy-MM-dd)
+                                string: Radares - código dos radares a serem consultados, separados por vírgula<br>
+                                string: DataConsulta - data de consulta, que varia de d0 até datas anteriores (padrão yyyy-MM-dd)
                             </td>
                         </tr>
                         <tr>
@@ -163,8 +177,8 @@
                             <td class="text-center" scope="row">/v1/GetVelocidadeMediaTrajeto</td>
                             <td class="text-center" scope="row">(FEATURE) Velocidade média dos trajetos executados no dia</td>
                             <td class="text-center" scope="row">
-                                string Radares: código dos radares a serem consultados, separados por vírgula<br />
-                                string DataConsulta: Data de consulta, que varia de d0 até datas anteriores (padrão yyyy-MM-dd)
+                                string: Radares - código dos radares a serem consultados, separados por vírgula<br>
+                                string: DataConsulta - data de consulta, que varia de d0 até datas anteriores (padrão yyyy-MM-dd)
                             </td>
                         </tr>
                         <tr>
@@ -172,23 +186,30 @@
                             <td class="text-center" scope="row" style="font-family:'Lato', sans-serif;">/v1/GetViagens</td>
                             <td class="text-center" scope="row" style="font-family:'Lato', sans-serif;">Todas as viagens ocorridas no dia, em todos os radares</td>
                             <td class="text-center" scope="row" style="font-family:'Lato', sans-serif;">
-                                string Radares: código dos radares a serem consultados, separados por vírgula.<br />
-                                string DataConsulta: Data de consulta, que varia de d0 até datas anteriores (padrão yyyy-MM-dd)
+                                string: Radares - código dos radares a serem consultados, separados por vírgula.<br />
+                                string: DataConsulta - data de consulta, que varia de d0 até datas anteriores (padrão yyyy-MM-dd)
                             </td>
                         </tr>
                         <tr>
                             <td style="font-family:'Lato', sans-serif;">13</td>
                             <td class="text-center" scope="row" style="font-family:'Lato', sans-serif;">/v1/GetDistanciaViagem</td>
-                            <td class="text-center" scope="row" style="font-family:'Lato', sans-serif;">Distância de todas as viagens ocorridas no dia, por diferença de distância entre os radares</td>
-                            <td class="text-center" scope="row" style="font-family:'Lato', sans-serif;">string DataConsulta: Data de consulta, que varia de d0 até datas anteriores (padrão yyyy-MM-dd)</td>
+                            <td class="text-center" scope="row" style="font-family:'Lato', sans-serif;">Distância de um radar x para um radar y</td>
+                            <td class="text-center" scope="row" style="font-family:'Lato', sans-serif;">
+                                int: RadarInicial - radar inicial da consulta.<br>
+                                int: RadarFinal - radar final da consulta.
+                            </td>
                         </tr>
                     </tbody>
                 </table>
+                <p class="text-center w-100 border boder-dark rounded p-2 mt-2 mb-5" style="border: 1px #00000050 solid!important; border-radius: 5px!important;">
+                    OBS: Para baixar .CSVs é necessário estar logado na nosssa plataforma.<br>
+                </p>
+
             </div>
         </div>
 
-        <div class="container-fluid">
-            <div class="col-12 mt-2 mb-3">
+        <div class="container-fluid mb-3">
+            <div class="col-12 mt-4 mb-3">
                 <h5 class="nav-link">Endpoints de predição</h5>
             </div>
             <div class="col-12 mt-2 mb-3">

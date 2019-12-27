@@ -66,6 +66,9 @@ namespace MilenioRadartonaAPI
             services.AddDbContext<ApplicationContext>(options =>
                 options.UseNpgsql(Configuration.GetConnectionString("postgres")));
 
+            services.AddDbContext<ApplicationContextCamadaVizualizacao>(options =>
+                options.UseNpgsql(Configuration.GetConnectionString("CamadaVisualizacao")));
+
 
             // ================================
 
@@ -81,11 +84,15 @@ namespace MilenioRadartonaAPI
             services.AddTransient<IRadartonaService, RadartonaService>();
             services.AddTransient<IRadartonaRepository, RadartonaRepository>();
 
+            services.AddTransient<IOptimusRepository, OptimusRepository>();
+
             services.AddTransient<IRadartonaService, RadartonaService>();
-            
+            services.AddTransient<IOptimusService, OptimusService>();
+            services.AddTransient<IOptimusRepository, OptimusRepository>();
+
 
             services.AddTransient<Service.IEmailSender, EmailSender>();
-            services.Configure<AuthMessageSenderOptions>(Configuration.GetSection("SendGrid"));
+            services.Configure<MyConfig>(Configuration.GetSection("MyConfig"));
 
             services.Configure<ForwardedHeadersOptions>(options =>
             {
@@ -163,22 +170,22 @@ namespace MilenioRadartonaAPI
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, MilenioRadartonaAPIContext contextIdentity, UserManager<MilenioRadartonaAPIUser> userManager, RoleManager<IdentityRole> roleManager)
         {
-            app.UseForwardedHeaders();
+            // Habilitar este código quando o site possuir certificado SSL
+            //app.UseForwardedHeaders();
 
-
-            app.Use(async (context, next) =>
-            {
-                if (context.Request.IsHttps || context.Request.Headers["X-Forwarded-Proto"] == Uri.UriSchemeHttps)
-                {
-                    await next();
-                }
-                else
-                {
-                    string queryString = context.Request.QueryString.HasValue ? context.Request.QueryString.Value : string.Empty;
-                    var https = "https://" + context.Request.Host + context.Request.Path + queryString;
-                    context.Response.Redirect(https);
-                }
-            });
+            //app.Use(async (context, next) =>
+            //{
+            //    if (context.Request.IsHttps || context.Request.Headers["X-Forwarded-Proto"] == Uri.UriSchemeHttps)
+            //    {
+            //        await next();
+            //    }
+            //    else
+            //    {
+            //        string queryString = context.Request.QueryString.HasValue ? context.Request.QueryString.Value : string.Empty;
+            //        var https = "https://" + context.Request.Host + context.Request.Path + queryString;
+            //        context.Response.Redirect(https);
+            //    }
+            //});
 
 
             if (env.IsDevelopment())
@@ -188,7 +195,7 @@ namespace MilenioRadartonaAPI
             else
             {
                 app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+                //The default HSTS value is 30 days.You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
 
@@ -210,6 +217,10 @@ namespace MilenioRadartonaAPI
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
+
+                routes.MapRoute(
+                    name: "intra",
+                    template: "{controller=Intra}/{action=Index}/{erro?}");
             });
 
 

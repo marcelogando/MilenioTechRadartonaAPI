@@ -1,0 +1,11 @@
+# ignore all logs
+*.log
+
+/.vs/*
+
+/bin/*
+
+/obj/*
+
+MilenioRadartonaAPI/bin/*
+MilenioRadartonaAPI/obj/*

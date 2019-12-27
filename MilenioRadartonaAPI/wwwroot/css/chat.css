@@ -47,10 +47,11 @@
 
 .macro {
     margin-top: 5px;
-    width: 85%;
+    width: 100%;
     border-radius: 5px;
     padding: 5px;
     display: flex;
+    margin-bottom: 5px;
 }
 
 .msj-rta {

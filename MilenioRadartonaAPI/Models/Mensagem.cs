@@ -11,7 +11,7 @@ namespace MilenioRadartonaAPI.Models
         {
         }
 
-        public Mensagem(int mensagemId, string corpo, string linkAudio, DateTime dataHora, Caminhao caminhao, int caminhaoId, Usuario usuario, int usuarioId)
+        public Mensagem(int mensagemId, string corpo, string linkAudio, DateTime dataHora, Caminhao caminhao, int caminhaoId, Usuario usuario, int usuarioId, string sender)
         {
             MensagemId = mensagemId;
             Corpo = corpo;
@@ -21,6 +21,7 @@ namespace MilenioRadartonaAPI.Models
             CaminhaoId = caminhaoId;
             Usuario = usuario;
             UsuarioId = usuarioId;
+            Sender = sender;
         }
 
         public int MensagemId { get; set; }
@@ -31,6 +32,7 @@ namespace MilenioRadartonaAPI.Models
         public int CaminhaoId { get; set; }
         public Usuario Usuario { get; set; }
         public int UsuarioId { get; set; }
+        public string Sender { get; set; }
 
     }
 }

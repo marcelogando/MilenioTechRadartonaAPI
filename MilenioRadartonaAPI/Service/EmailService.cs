@@ -4,6 +4,7 @@ using SendGrid.Helpers.Mail;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mail;
 using System.Threading.Tasks;
 
 namespace MilenioRadartonaAPI.Service
@@ -12,8 +13,8 @@ namespace MilenioRadartonaAPI.Service
     {
         AuthMessageSenderOptions Options { get; }
 
-        Task Execute(string apiKey, string subject, string message, string email, string fromEmail, string fromName);
-        Task SendEmailAsync(string email, string subject, string message, string fromEmail, string fromName);
+        void Execute(string apiKey, string subject, string message, string email, string fromEmail, string fromName, string EmailAdministrador, string SenhaEmailAdministrador);
+        void SendEmailAsync(string email, string subject, string message, string fromEmail, string fromName, string EmailAdministrador, string SenhaEmailAdministrador);
     }
 
     public class EmailSender : IEmailSender
@@ -25,29 +26,47 @@ namespace MilenioRadartonaAPI.Service
 
         public AuthMessageSenderOptions Options { get; } //PEGA DO APPSETTINGS MESMO E QUE SE DANE :p
 
-        public Task SendEmailAsync(string email, string subject, string message, string fromEmail, string fromName)
+        public void SendEmailAsync(string email, string subject, string message, string fromEmail, string fromName, string EmailAdministrador, string SenhaEmailAdministrador)
         {
-            return Execute(Options.SendGridKey, subject, message, email, fromEmail, fromName);
+            Execute(Options.SendGridKey, subject, message, email, fromEmail, fromName, EmailAdministrador, SenhaEmailAdministrador);
         }
 
-        public Task Execute(string apiKey, string subject, string message, string email, string fromEmail, string fromName)
+        public void Execute(string apiKey, string subject, string message, string email, string fromEmail, string fromName, string EmailAdministrador, string SenhaEmailAdministrador)
         {
-            var client = new SendGridClient(apiKey);
-            var msg = new SendGridMessage()
+
+            //contato.mensagem = contato.mensagem.Replace("\n", "<br>");
+
+            SmtpClient smtpClient = new SmtpClient("smtp.gmail.com", 587)
             {
-                From = new EmailAddress(fromEmail, fromName),
-                Subject = subject,
-                PlainTextContent = message,
-                HtmlContent = message
+                EnableSsl = true,
+                UseDefaultCredentials = false,
+
+                Credentials = new System.Net.NetworkCredential(EmailAdministrador, SenhaEmailAdministrador)
             };
 
-            msg.AddTo(new EmailAddress(email));
+            System.Net.ServicePointManager.ServerCertificateValidationCallback = delegate (object s,
+            System.Security.Cryptography.X509Certificates.X509Certificate certificate,
+            System.Security.Cryptography.X509Certificates.X509Chain chain,
+            System.Net.Security.SslPolicyErrors sslPolicyErrors)
+            {
+                return true;
+            };
 
-            // Disable click tracking.
-            // See https://sendgrid.com/docs/User_Guide/Settings/tracking.html
-            msg.SetClickTracking(false, false);
+            smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
 
-            return client.SendEmailAsync(msg);
+            MailMessage mail = new MailMessage
+            {
+                Subject = subject,
+
+                From = new MailAddress(fromEmail, fromName),
+                Body = message,
+                IsBodyHtml = true
+            };
+
+            mail.To.Add(new MailAddress(email));
+            mail.BodyEncoding = System.Text.Encoding.UTF8;
+
+            smtpClient.Send(mail);
         }
 
     }

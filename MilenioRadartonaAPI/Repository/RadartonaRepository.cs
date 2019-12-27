@@ -1,6 +1,6 @@
 ﻿using MilenioRadartonaAPI.Models;
 using MilenioRadartonaAPI.Relatorios;
-
+using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,28 +15,26 @@ namespace MilenioRadartonaAPI.Repository
 {
     public interface IRadartonaRepository
     {
-        List<BaseRadaresDTO> GetLocalizacaoRadares();
-        List<BaseRadaresDTO> GetRadaresTipoEnquadramento(string[] Enquadramentos);
-        List<BaseRadaresDTO> GetRadaresZonaConcessao(string ZonaConcessao);
-        List<FluxoVeiculosRadarDTO> GetFluxoVeiculosRadares(string[] Radares, string DataConsulta);
-        List<TipoVeiculosRadaresDTO> GetTipoVeiculosRadares(string[] Radares, string DataConsulta);
-        List<InfracoesPorRadarDTO> GetInfracoesPorRadar(string[] Radares, string DataConsulta);
-        List<AcuraciaIdentificacaoRadaresDTO> GetAcuraciaIdentificacaoRadares(string[] Radares, string DataConsulta);
-        List<BaseRadaresDTO> GetPerfilVelocidadesRadar(int VelocidadeMin, int VelocidadeMax);
-        List<TrajetosDTO> GetTrajetos(string[] Radares, string DataConsulta);
-        List<VelocidadeMediaTrajetoDTO> GetVelocidadeMediaTrajeto(string DataConsulta, string[] Radares);
-        List<ViagensDTO> GetViagens(string DataConsulta, string[] Radares);
-        List<DistanciaViagemDTO> GetDistanciaViagem(string DataConsulta);
+        LocalizacaoRadares GetLocalizacaoRadares();
+        List<List<RadaresTipoEnquadramento>> GetRadaresTipoEnquadramento(string[] enquadramentos);
+        List<RadaresLote> GetRadaresLote(int lote);
+        List<FluxoVeiculosRadares> GetFluxoVeiculosRadares(string[] radares, string dataConsulta);
+        List<TipoVeiculosRadares> GetTipoVeiculosRadares(string[] radares, string dataConsulta);
+        List<InfracoesRadares> GetInfracoesPorRadar(string[] radares, string dataConsulta);
+        List<AcuraciaIdentificacaoRadares> GetAcuraciaIdentificacaoRadares(string[] radares, string dataConsulta);
+        List<BaseRadaresDTO> GetPerfilVelocidadesRadar(int velocidadeMin, int velocidadeMax);
+        List<Models.Trajetos> GetTrajetos(string[] radares, string dataConsulta);
+        List<Models.Trajetos> GetVelocidadeMediaTrajeto(string[] radares, string dataConsulta);
+        List<Models.Viagens> GetViagens(string[] radares, string dataConsulta);
+        List<Models.DistanciaViagem> GetDistanciaViagem(int radarInicio, int radarFinal);
 
-        bool VerificaChaveTaValida(string chave);
-        bool UsuarioPodePedirMaisReq(string chave);
         Task LogRequest(string Usuario, string Endpoint, long TempoRequisicao);
 
 
         // ======= CSV =======
         byte[] GetLocalizacaoRadaresCSV();
         byte[] GetRadaresTipoEnquadramentoCSV(string[] Enquadramentos);
-        byte[] GetRadaresZonaConcessaoCSV(string ZonaConcessao);
+        byte[] GetRadaresLoteCSV(int lote);
         byte[] GetFluxoVeiculosRadaresCSV(string[] Radares, string DataConsulta);
         byte[] GetTipoVeiculosRadaresCSV(string[] Radares, string DataConsulta);
         byte[] GetInfracoesPorRadarCSV(string[] Radares, string DataConsulta);
@@ -45,364 +43,112 @@ namespace MilenioRadartonaAPI.Repository
         byte[] GetTrajetosCSV(string DataConsulta, string[] Radares);
         byte[] GetVelocidadeMediaTrajetoCSV(string DataConsulta, string[] Radares);
         byte[] GetViagensCSV(string DataConsulta, string[] Radares);
-        byte[] GetDistanciaViagemCSV(string DataConsulta);
+        byte[] GetDistanciaViagemCSV(int radarInicial, int radarFinal);
+
+        Task<int> QtdRequestsDia(string Usuario);
     }
 
 
-    public class RadartonaRepository : BaseRepository<BaseRadares>, IRadartonaRepository
+    public class RadartonaRepository : IRadartonaRepository
     {
-        private static string connString = "###";
+        // TODO: Descomentar a string de conexao final
+        private static string connString = "Host=10.35.200.72;Port=5432;Username=smt_user;Password=smt_user;Database=radartona;";
 
-        public RadartonaRepository(ApplicationContext ctx) : base(ctx)
+        private readonly ApplicationContextCamadaVizualizacao _ctxView;
+
+        private readonly ApplicationContext _ctx;
+
+
+        public RadartonaRepository(ApplicationContextCamadaVizualizacao cxtView, ApplicationContext ctx)
         {
-
+            _ctxView = cxtView;
+            _ctx = ctx;
         }
 
-        public List<BaseRadaresDTO> GetLocalizacaoRadares()
+        public LocalizacaoRadares GetLocalizacaoRadares()
         {
-            List<BaseRadaresDTO> lstRetorno = new List<BaseRadaresDTO>();
+            var retorno = _ctxView.LocalizacaoRadares.Where(k => k.Id == 1).FirstOrDefault();
+            return retorno;
+        }
 
-            using (Npgsql.NpgsqlConnection conn = new Npgsql.NpgsqlConnection(connString))
+
+        public List<List<RadaresTipoEnquadramento>> GetRadaresTipoEnquadramento(string[] enquadramentos)
+        {
+            List<List<RadaresTipoEnquadramento>> lista = new List<List<RadaresTipoEnquadramento>>();
+
+            for (int i = 0; i < enquadramentos.Length; i ++)
             {
-                Npgsql.NpgsqlCommand comm = conn.CreateCommand();
-                comm.CommandTimeout = 420;
-
-                comm.CommandType = CommandType.Text;
-                comm.CommandText = "select lote, codigo, endereco, sentido, referencia, tipo_equip, enquadrame, qtde_fxs_f,  \n" +
-                                   "data_publi, velocidade, lat, lon, bairro  from \"BaseRadares\" b;";
-
-                conn.Open();
-
-                Npgsql.NpgsqlDataReader dr = comm.ExecuteReader();
-
-                while (dr.Read())
-                {
-                    BaseRadaresDTO ett = new BaseRadaresDTO();
-                    ett.lote = Convert.ToInt32(dr["lote"]);
-                    ett.codigo = dr["codigo"].ToString();
-                    ett.endereco = dr["endereco"].ToString();
-                    ett.sentido = dr["sentido"].ToString();
-                    ett.referencia = dr["referencia"].ToString();
-                    ett.tipoEquipamento = dr["tipo_equip"].ToString();
-                    ett.enquadramento = dr["enquadrame"].ToString();
-                    try
-                    {
-                        ett.qtdeFaixas = Convert.ToInt32(dr["qtde_fxs_f"]);
-                    }
-                    catch { }
-
-                    ett.dataPublicacao = dr["data_publi"].ToString();
-                    ett.velocidade = dr["velocidade"].ToString();
-                    ett.lat = dr["lat"].ToString();
-                    ett.lon = dr["lon"].ToString();
-                    ett.bairro = dr["bairro"].ToString();
-
-                    lstRetorno.Add(ett);
-                }
+                lista.Add(_ctxView.RadaresTipoEnquadramento.Where(k => k.Enquadramento.Equals(enquadramentos[i])).ToList());
             }
 
-            return lstRetorno;
+            return lista;
         }
 
-        public List<BaseRadaresDTO> GetRadaresTipoEnquadramento(string[] Enquadramentos)
+
+        public List<RadaresLote> GetRadaresLote(int lote)
         {
-            List<BaseRadaresDTO> lstRetorno = new List<BaseRadaresDTO>();
-
-            using (Npgsql.NpgsqlConnection conn = new Npgsql.NpgsqlConnection(connString))
-            {
-                Npgsql.NpgsqlCommand comm = conn.CreateCommand();
-                comm.CommandTimeout = 420;
-
-                comm.CommandType = CommandType.Text;
-                comm.CommandText = "select lote, codigo, endereco, sentido, referencia, tipo_equip, enquadrame, qtde_fxs_f,  \n" +
-                                   "data_publi, velocidade, lat, lon, bairro  from \"BaseRadares\" b;";
-
-                conn.Open();
-
-                Npgsql.NpgsqlDataReader dr = comm.ExecuteReader();
-
-                while (dr.Read())
-                {
-                    BaseRadaresDTO ett = new BaseRadaresDTO();
-                    ett.lote = Convert.ToInt32(dr["lote"]);
-                    ett.codigo = dr["codigo"].ToString();
-                    ett.endereco = dr["endereco"].ToString();
-                    ett.sentido = dr["sentido"].ToString();
-                    ett.referencia = dr["referencia"].ToString();
-                    ett.tipoEquipamento = dr["tipo_equip"].ToString();
-                    ett.enquadramento = dr["enquadrame"].ToString();
-
-                    try
-                    {
-                        ett.qtdeFaixas = Convert.ToInt32(dr["qtde_fxs_f"]);
-                    }
-                    catch { }
-
-                    ett.dataPublicacao = dr["data_publi"].ToString();
-                    ett.velocidade = dr["velocidade"].ToString();
-                    ett.lat = dr["lat"].ToString();
-                    ett.lon = dr["lon"].ToString();
-                    ett.bairro = dr["bairro"].ToString();
-
-                    lstRetorno.Add(ett);
-                }
-            }
-
-            lstRetorno = lstRetorno.Where(d => Enquadramentos.Any(e => d.enquadramento.Split("-").Contains(e))).ToList();
-
-            return lstRetorno;
+            var retorno = _ctxView.RadaresZonaConcessao.Where(k => k.ZonaConcessao.Contains(Convert.ToString(lote))).ToList();
+            return retorno;
         }
 
-        public List<BaseRadaresDTO> GetRadaresZonaConcessao(string ZonaConcessao)
+
+        public List<FluxoVeiculosRadares> GetFluxoVeiculosRadares(string[] radares, string dataConsulta)
         {
 
-            List<BaseRadaresDTO> lstRetorno = new List<BaseRadaresDTO>();
+            List<FluxoVeiculosRadares> lista = new List<FluxoVeiculosRadares>();
 
-            using (Npgsql.NpgsqlConnection conn = new Npgsql.NpgsqlConnection(connString))
+            for (int i = 0; i < radares.Length; i++)
             {
-                Npgsql.NpgsqlCommand comm = conn.CreateCommand();
-                comm.CommandTimeout = 420;
-
-                comm.CommandType = CommandType.Text;
-                comm.CommandText = "select lote, codigo, endereco, sentido, referencia, tipo_equip, enquadrame, qtde_fxs_f,  \n" +
-                                   "data_publi, velocidade, lat, lon, bairro  from \"BaseRadares\" b where bairro = '" + ZonaConcessao + "';";
-
-                conn.Open();
-
-                Npgsql.NpgsqlDataReader dr = comm.ExecuteReader();
-
-                while (dr.Read())
-                {
-                    BaseRadaresDTO ett = new BaseRadaresDTO();
-                    ett.lote = Convert.ToInt32(dr["lote"]);
-                    ett.codigo = dr["codigo"].ToString();
-                    ett.endereco = dr["endereco"].ToString();
-                    ett.sentido = dr["sentido"].ToString();
-                    ett.referencia = dr["referencia"].ToString();
-                    ett.tipoEquipamento = dr["tipo_equip"].ToString();
-                    ett.enquadramento = dr["enquadrame"].ToString();
-
-                    try
-                    {
-                        ett.qtdeFaixas = Convert.ToInt32(dr["qtde_fxs_f"]);
-                    }
-                    catch { }
-
-                    ett.dataPublicacao = dr["data_publi"].ToString();
-                    ett.velocidade = dr["velocidade"].ToString();
-                    ett.lat = dr["lat"].ToString();
-                    ett.lon = dr["lon"].ToString();
-                    ett.bairro = dr["bairro"].ToString();
-
-                    lstRetorno.Add(ett);
-                }
+                var achado = _ctxView.FluxoVeiculosRadares.Where(k => k.Radares.Contains(radares[i]) && Convert.ToString(k.DataConsulta).Contains(dataConsulta)).FirstOrDefault();
+                lista.Add(achado);
             }
 
-            return lstRetorno;
+            return lista;
         }
 
-        public List<FluxoVeiculosRadarDTO> GetFluxoVeiculosRadares(string[] Radares, string DataConsulta)
+        public List<TipoVeiculosRadares> GetTipoVeiculosRadares(string[] radares, string dataConsulta)
         {
-            List<FluxoVeiculosRadarDTO> lstRetorno = new List<FluxoVeiculosRadarDTO>();
+            List<TipoVeiculosRadares> lista = new List<TipoVeiculosRadares>();
 
-            using (Npgsql.NpgsqlConnection conn = new Npgsql.NpgsqlConnection(connString))
+            for (int i = 0; i < radares.Length; i++)
             {
-                Npgsql.NpgsqlCommand comm = conn.CreateCommand();
-                comm.CommandTimeout = 420;
-
-                comm.CommandType = CommandType.Text;
-                comm.CommandText = "select c.localidade as codigo, c.data_e_hora as data_hora, c.tipo as tipo_veiculo, c.contagem, c.autuacoes, c.placas, b.qtde_fxs_f as qtde_faixas,\n" +
-                                   "b.velocidade, b.lat, b.lon, b.bairro\n" +
-                                   "from contagens c inner join \"BaseRadares\" b \n" +
-                                   "on b.codigo like concat('%', c.localidade, '%')\n" +
-                                   "where cast(c.data_e_hora as date) = '" + DataConsulta + "'\n" +
-                                   "and c.localidade in (";
-
-                for (int i = 0; i < Radares.Count(); i++)
-                {
-                    if (i == 0)
-                    {
-                        comm.CommandText += "'" + Radares[i] + "'";
-                    }
-                    else
-                    {
-                        comm.CommandText += ",'" + Radares[i] + "'";
-                    }
-                }
-
-                comm.CommandText += ");";
-
-                conn.Open();
-
-                Npgsql.NpgsqlDataReader dr = comm.ExecuteReader();
-
-                while (dr.Read())
-                {
-                    FluxoVeiculosRadarDTO ett = new FluxoVeiculosRadarDTO();
-
-                    ett.codigo = Convert.ToInt32(dr["codigo"]);
-                    ett.data_hora = Convert.ToDateTime(dr["data_hora"]);
-                    ett.tipo_veiculo = Convert.ToInt32(dr["tipo_veiculo"]);
-                    ett.contagem = Convert.ToInt32(dr["contagem"]);
-                    ett.autuacoes = Convert.ToInt32(dr["autuacoes"]);
-                    ett.placas = Convert.ToInt32(dr["placas"]);
-                    ett.qtde_faixas = Convert.ToInt32(dr["qtde_faixas"]);
-                    ett.lat = Convert.ToDecimal(dr["lat"]);
-                    ett.lon = Convert.ToDecimal(dr["lon"]);
-                    ett.bairro = dr["bairro"].ToString();
-
-                    lstRetorno.Add(ett);
-                }
+                var achado = _ctxView.TipoVeiculosRadares.Where(k => k.Radares.Contains(radares[i]) && Convert.ToString(k.DataConsulta).Contains(dataConsulta)).FirstOrDefault();
+                lista.Add(achado);
             }
 
-            return lstRetorno;
+            return lista;
         }
 
-        public List<TipoVeiculosRadaresDTO> GetTipoVeiculosRadares(string[] Radares, string DataConsulta)
+        public List<InfracoesRadares> GetInfracoesPorRadar(string[] radares, string dataConsulta)
         {
-            List<TipoVeiculosRadaresDTO> lstRetorno = new List<TipoVeiculosRadaresDTO>();
 
-            using (Npgsql.NpgsqlConnection conn = new Npgsql.NpgsqlConnection(connString))
+            List<InfracoesRadares> lista = new List<InfracoesRadares>();
+
+            for (int i = 0; i < radares.Length; i++)
             {
-                Npgsql.NpgsqlCommand comm = conn.CreateCommand();
-                comm.CommandTimeout = 420;
-
-                comm.CommandType = CommandType.Text;
-                comm.CommandText = "select localidade as codigo, data_e_hora as data_hora, sum(contagem) as contagem, sum(autuacoes) as autuacoes, sum(placas) as placas from contagens where localidade in (";
-
-                for (int i = 0; i < Radares.Count(); i++)
-                {
-                    if (i == 0)
-                    {
-                        comm.CommandText += "'" + Radares[i] + "'";
-                    }
-                    else
-                    {
-                        comm.CommandText += ",'" + Radares[i] + "'";
-                    }
-                }
-
-                comm.CommandText += ") and cast(data_e_hora as date) = '" + DataConsulta + "' group by localidade, data_e_hora order by codigo, data_e_hora;";
-
-                conn.Open();
-
-                Npgsql.NpgsqlDataReader dr = comm.ExecuteReader();
-
-                while (dr.Read())
-                {
-                    TipoVeiculosRadaresDTO ett = new TipoVeiculosRadaresDTO();
-
-                    ett.codigo = Convert.ToInt32(dr["codigo"]);
-                    ett.dataHora = Convert.ToDateTime(dr["data_hora"]);
-                    ett.contagem = Convert.ToInt32(dr["contagem"]);
-                    ett.autuacoes = Convert.ToInt32(dr["autuacoes"]);
-                    ett.placas = Convert.ToInt32(dr["placas"]);
-
-                    lstRetorno.Add(ett);
-                }
+                var achado = _ctxView.InfracoesRadares.Where(k => k.Radares.Contains(radares[i]) && Convert.ToString(k.DataConsulta).Contains(dataConsulta)).FirstOrDefault();
+                lista.Add(achado);
             }
 
-            return lstRetorno;
+            return lista;
         }
 
-        public List<InfracoesPorRadarDTO> GetInfracoesPorRadar(string[] Radares, string DataConsulta)
+        public List<AcuraciaIdentificacaoRadares> GetAcuraciaIdentificacaoRadares(string[] radares, string dataConsulta)
         {
-            List<InfracoesPorRadarDTO> lstRetorno = new List<InfracoesPorRadarDTO>();
+            List<AcuraciaIdentificacaoRadares> lista = new List<AcuraciaIdentificacaoRadares>();
 
-            using (Npgsql.NpgsqlConnection conn = new Npgsql.NpgsqlConnection(connString))
+            for (int i = 0; i < radares.Length; i++)
             {
-                Npgsql.NpgsqlCommand comm = conn.CreateCommand();
-                comm.CommandTimeout = 420;
-
-                comm.CommandType = CommandType.Text;
-                comm.CommandText = "select * from contagens where cast(data_e_hora as date) = '" + DataConsulta + "' and localidade in (";
-
-                for (int i = 0; i < Radares.Count(); i++)
-                {
-                    if (i == 0)
-                    {
-                        comm.CommandText += "'" + Radares[i] + "'";
-                    }
-                    else
-                    {
-                        comm.CommandText += ",'" + Radares[i] + "'";
-                    }
-                }
-
-                comm.CommandText += ");";
-
-                conn.Open();
-
-                Npgsql.NpgsqlDataReader dr = comm.ExecuteReader();
-
-                while (dr.Read())
-                {
-                    InfracoesPorRadarDTO ett = new InfracoesPorRadarDTO();
-
-                    ett.codigoRadar = Convert.ToInt32(dr["localidade"]);
-                    ett.dataHora = Convert.ToDateTime(dr["data_e_hora"]);
-                    ett.tipoVeiculo = Convert.ToInt32(dr["tipo"]);
-                    ett.contagem = Convert.ToInt32(dr["contagem"]);
-                    ett.autuacoes = Convert.ToInt32(dr["autuacoes"]);
-                    ett.placas = Convert.ToInt32(dr["placas"]);
-
-                    lstRetorno.Add(ett);
-                }
+                var achado = _ctxView.AcuraciaIdentificacaoRadares.Where(k => k.Radares.Contains(radares[i]) && Convert.ToString(k.DataConsulta).Contains(dataConsulta)).FirstOrDefault();
+                lista.Add(achado);
             }
 
-            return lstRetorno;
+            return lista;
         }
 
-        public List<AcuraciaIdentificacaoRadaresDTO> GetAcuraciaIdentificacaoRadares(string[] Radares, string DataConsulta)
-        {
-            List<AcuraciaIdentificacaoRadaresDTO> lstRetorno = new List<AcuraciaIdentificacaoRadaresDTO>();
 
-            using (Npgsql.NpgsqlConnection conn = new Npgsql.NpgsqlConnection(connString))
-            {
-                Npgsql.NpgsqlCommand comm = conn.CreateCommand();
-                comm.CommandTimeout = 420;
-
-                comm.CommandType = CommandType.Text;
-                comm.CommandText = "select localidade as codigo, data_e_hora, tipo, contagem, placas, cast(placas as decimal)/cast(contagem as decimal) as acuracia_identificacao\n" +
-                                   "from contagens where cast(data_e_hora as date) = '" + DataConsulta + "' and localidade in (";
-
-                for (int i = 0; i < Radares.Count(); i++)
-                {
-                    if (i == 0)
-                    {
-                        comm.CommandText += "'" + Radares[i] + "'";
-                    }
-                    else
-                    {
-                        comm.CommandText += ",'" + Radares[i] + "'";
-                    }
-                }
-
-                comm.CommandText += ");";
-
-                conn.Open();
-
-                Npgsql.NpgsqlDataReader dr = comm.ExecuteReader();
-
-                while (dr.Read())
-                {
-                    AcuraciaIdentificacaoRadaresDTO ett = new AcuraciaIdentificacaoRadaresDTO();
-
-                    ett.codigoRadar = Convert.ToInt32(dr["codigo"]);
-                    ett.dataHora = Convert.ToDateTime(dr["data_e_hora"]);
-                    ett.tipoVeiculo = Convert.ToInt32(dr["tipo"]);
-                    ett.contagem = Convert.ToInt32(dr["contagem"]);
-                    ett.placas = Convert.ToInt32(dr["placas"]);
-                    ett.acuraciaIdentificacao = Convert.ToDecimal(dr["acuracia_identificacao"]);
-
-                    lstRetorno.Add(ett);
-                }
-            }
-
-            return lstRetorno;
-        }
-
-        public List<BaseRadaresDTO> GetPerfilVelocidadesRadar(int VelocidadeMin, int VelocidadeMax)
+        // Não possui camada de visualização, pois query é simples demais
+        public List<BaseRadaresDTO> GetPerfilVelocidadesRadar(int velocidadeMin, int velocidadeMax)
         {
             List<BaseRadaresDTO> lstRetorno = new List<BaseRadaresDTO>();
 
@@ -413,28 +159,29 @@ namespace MilenioRadartonaAPI.Repository
 
                 comm.CommandType = CommandType.Text;
                 comm.CommandText = "select lote, codigo, endereco, sentido, referencia, tipo_equip, enquadrame, qtde_fxs_f,  \n" +
-                                   "data_publi, velocidade, lat, lon, bairro  from \"BaseRadares\" b where velocidade_carro_moto between " + VelocidadeMin.ToString() + " and " + VelocidadeMax + ";";
+                                   "data_publi, velocidade, lat, lon, bairro  from \"BaseRadares\" b where velocidade_carro_moto between " + velocidadeMin.ToString() + " and " + velocidadeMax + ";";
 
                 conn.Open();
 
                 Npgsql.NpgsqlDataReader dr = comm.ExecuteReader();
+
 
                 while (dr.Read())
                 {
                     BaseRadaresDTO ett = new BaseRadaresDTO();
-                    ett.lote = Convert.ToInt32(dr["lote"]);
-                    ett.codigo = dr["codigo"].ToString();
-                    ett.endereco = dr["endereco"].ToString();
-                    ett.sentido = dr["sentido"].ToString();
-                    ett.referencia = dr["referencia"].ToString();
-                    ett.tipoEquipamento = dr["tipo_equip"].ToString();
-                    ett.enquadramento = dr["enquadrame"].ToString();
-                    ett.qtdeFaixas = Convert.ToInt32(dr["qtde_fxs_f"]);
-                    ett.dataPublicacao = dr["data_publi"].ToString();
-                    ett.velocidade = dr["velocidade"].ToString();
-                    ett.lat = dr["lat"].ToString();
-                    ett.lon = dr["lon"].ToString();
-                    ett.bairro = dr["bairro"].ToString();
+                    ett.Lote = Convert.ToInt32(dr["lote"]);
+                    ett.Codigo = dr["codigo"].ToString();
+                    ett.Endereco = dr["endereco"].ToString();
+                    ett.Sentido = dr["sentido"].ToString();
+                    ett.Referencia = dr["referencia"].ToString();
+                    ett.TipoEquipamento = dr["tipo_equip"].ToString();
+                    ett.Enquadramento = dr["enquadrame"].ToString();
+                    ett.QtdeFaixas = Convert.ToInt32(dr["qtde_fxs_f"]);
+                    ett.DataPublicacao = dr["data_publi"].ToString();
+                    ett.Velocidade = dr["velocidade"].ToString();
+                    ett.Lat = dr["lat"].ToString();
+                    ett.Lon = dr["lon"].ToString();
+                    ett.Bairro = dr["bairro"].ToString();
 
                     lstRetorno.Add(ett);
                 }
@@ -443,249 +190,57 @@ namespace MilenioRadartonaAPI.Repository
             return lstRetorno;
         }
 
-        public List<TrajetosDTO> GetTrajetos(string[] Radares, string DataConsulta)
+        public List<Models.Trajetos> GetTrajetos(string[] radares, string dataConsulta)
         {
-            List<TrajetosDTO> lstRetorno = new List<TrajetosDTO>();
+            List<Models.Trajetos> lista = new List<Models.Trajetos>();
 
-
-            string InClause = "";
-
-            InClause += "(";
-
-            for (int i = 0; i < Radares.Count(); i++)
+            for (int i = 0; i < radares.Length; i++)
             {
-                if (i == 0)
-                {
-                    InClause += "'" + Radares[i] + "'";
-                }
-                else
-                {
-                    InClause += ",'" + Radares[i] + "'";
-                }
+                var achado = _ctxView.Trajetos.Where(k => k.Radares.Contains(radares[i]) && Convert.ToString(k.DataConsulta).Contains(dataConsulta)).FirstOrDefault();
+                lista.Add(achado);
             }
 
-            InClause += ")";
-
-            using (Npgsql.NpgsqlConnection conn = new Npgsql.NpgsqlConnection(connString))
-            {
-                Npgsql.NpgsqlCommand comm = conn.CreateCommand();
-                comm.CommandTimeout = 420;
-
-                comm.CommandType = CommandType.Text;
-                comm.CommandText = "select t.viagem_id,\n" +
-                                    "t.origem,\n" +
-                                    "case when date_part('hour', t.data_inicio) between 0 and 4 then 'madrugada'\n" +
-                                         "when date_part('hour', t.data_inicio) between 5 and 12 then 'manha'\n" +
-                                         "when date_part('hour', t.data_inicio) between 13 and 18 then 'tarde'\n" +
-                                         "when date_part('hour', t.data_inicio) between 18 and 23 then 'noite'\n" +
-                                         "end as periodo_dia,\n" +
-                                            "avg((DATE_PART('day', t.data_final::timestamp - t.data_inicio::timestamp) * 24 + \n" +
-                                                   "DATE_PART('hour', t.data_final::timestamp - t.data_inicio::timestamp)) * 60 +\n" +
-                                                   "DATE_PART('minute', t.data_final::timestamp - t.data_inicio::timestamp)) as media_minutos_trajeto,\n" +
-                                            "avg(t.v0) as media_v0,\n" +
-                                            "t.destino,\n" +
-                                            "avg(t.v1) as media_v1\n" +
-                                    "from trajetos t\n" +
-                                    "where cast(data_inicio as date) = '" + DataConsulta + "'\n" +
-                                    "and (t.origem in " + InClause + " or t.destino in " + InClause + ")\n" +
-                                    "group by t.viagem_id, t.origem, periodo_dia, t.destino;";
-
-                conn.Open();
-
-                Npgsql.NpgsqlDataReader dr = comm.ExecuteReader();
-
-                while (dr.Read())
-                {
-                    TrajetosDTO ett = new TrajetosDTO();
-
-                    ett.codigoRadarOrigem = Convert.ToInt32(dr["origem"]);
-                    ett.mediaVelOrigem = Convert.ToDecimal(dr["media_v0"]);
-                    ett.periodoDia = dr["periodo_dia"].ToString();
-                    ett.mediaMinutosTrajeto = Convert.ToDecimal(dr["media_minutos_trajeto"]);
-                    ett.codigoRadarDestino = Convert.ToInt32(dr["destino"]);
-                    ett.mediaVelDestino = Convert.ToDecimal(dr["media_v1"]);
-
-                    lstRetorno.Add(ett);
-                }
-            }
-
-            return lstRetorno;
+            return lista;
         }
 
-        public List<VelocidadeMediaTrajetoDTO> GetVelocidadeMediaTrajeto(string DataConsulta, string[] Radares)
+
+        public List<Models.Trajetos> GetVelocidadeMediaTrajeto(string[] radares, string dataConsulta)
         {
-            List<VelocidadeMediaTrajetoDTO> lstRetorno = new List<VelocidadeMediaTrajetoDTO>();
+            List<Models.Trajetos> lista = new List<Models.Trajetos>();
 
-            string InClause = "";
-
-            InClause += "(";
-
-            for (int i = 0; i < Radares.Count(); i++)
+            for (int i = 0; i < radares.Length; i++)
             {
-                if (i == 0)
-                {
-                    InClause += "'" + Radares[i] + "'";
-                }
-                else
-                {
-                    InClause += ",'" + Radares[i] + "'";
-                }
+                var achado = _ctxView.Trajetos.Where(k => k.Radares.Contains(radares[i]) && Convert.ToString(k.DataConsulta).Contains(dataConsulta)).FirstOrDefault();
+                lista.Add(achado);
             }
 
-            InClause += ")";
-
-            using (Npgsql.NpgsqlConnection conn = new Npgsql.NpgsqlConnection(connString))
-            {
-                Npgsql.NpgsqlCommand comm = conn.CreateCommand();
-                comm.CommandTimeout = 420;
-
-                comm.CommandType = CommandType.Text;
-                comm.CommandText = "select  t.viagem_id,\n" +
-                                            "t.origem,\n" +
-                                            "case when date_part('hour', t.data_inicio) between 0 and 4 then 'madrugada'\n" +
-                                                 "when date_part('hour', t.data_inicio) between 5 and 12 then 'manha'\n" +
-                                                 "when date_part('hour', t.data_inicio) between 13 and 18 then 'tarde'\n" +
-                                                 "when date_part('hour', t.data_inicio) between 18 and 23 then 'noite'\n" +
-                                                 "end as periodo_dia,\n" +
-                                                    "avg((t.v0 + t.v1) / 2 ) as velocidade_media,\n" +
-                                                    "t.destino\n" +
-                                            "from trajetos t\n" +
-                                            "where cast(data_inicio as date) = '" + DataConsulta + "'\n" +
-                                            "and (t.origem in " + InClause + " or t.destino in " + InClause + ")\n" +
-                                            "group by t.viagem_id, t.origem, periodo_dia, t.destino;";
-
-                conn.Open();
-
-                Npgsql.NpgsqlDataReader dr = comm.ExecuteReader();
-
-                while (dr.Read())
-                {
-                    VelocidadeMediaTrajetoDTO ett = new VelocidadeMediaTrajetoDTO();
-
-                    ett.codigoRadarOrigem = Convert.ToInt32(dr["origem"]);
-                    ett.periodoDia = dr["periodo_dia"].ToString();
-                    ett.velocidadeMedia = Convert.ToDecimal(dr["velocidade_media"]);
-                    ett.codigoRadarDestino = Convert.ToInt32(dr["destino"]);
-
-                    lstRetorno.Add(ett);
-                }
-            }
-
-            return lstRetorno;
+            return lista;
         }
 
-        public List<ViagensDTO> GetViagens(string DataConsulta, string[] Radares)
+        public List<Models.Viagens> GetViagens(string[] radares, string dataConsulta)
         {
-            List<ViagensDTO> lstRetorno = new List<ViagensDTO>();
+            List<Models.Viagens> lista = new List<Models.Viagens>();
 
-            string InClause = "";
-
-            InClause += "(";
-
-            for (int i = 0; i < Radares.Count(); i++)
+            for (int i = 0; i < radares.Length; i++)
             {
-                if (i == 0)
-                {
-                    InClause += "'" + Radares[i] + "'";
-                }
-                else
-                {
-                    InClause += ",'" + Radares[i] + "'";
-                }
+                var achado = _ctxView.Viagens.Where(k => k.Radares.Contains(radares[i]) && Convert.ToString(k.DataConsulta).Contains(dataConsulta)).FirstOrDefault();
+                lista.Add(achado);
             }
 
-            InClause += ")";
-
-            using (Npgsql.NpgsqlConnection conn = new Npgsql.NpgsqlConnection(connString))
-            {
-                Npgsql.NpgsqlCommand comm = conn.CreateCommand();
-                comm.CommandTimeout = 420;
-
-                comm.CommandType = CommandType.Text;
-                comm.CommandText = "select id, inicio, data_inicio, final, data_final, tipo from viagens where cast(data_inicio as date) = '" + DataConsulta + "'\n" +
-                    "and (inicio in " + InClause + " or final in " + InClause + ");";
-
-                conn.Open();
-
-                Npgsql.NpgsqlDataReader dr = comm.ExecuteReader();
-
-                while (dr.Read())
-                {
-                    ViagensDTO ett = new ViagensDTO();
-
-                    ett.viagemId = Convert.ToInt32(dr["id"]);
-                    ett.codigoRadarInicio = Convert.ToInt32(dr["inicio"]);
-                    ett.dataHoraInicio = Convert.ToDateTime(dr["data_inicio"]);
-                    ett.codigoRadarFinal = Convert.ToInt32(dr["final"]);
-                    ett.dataHoraFinal = Convert.ToDateTime(dr["data_final"]);
-                    ett.tipoVeiculo = Convert.ToInt32(dr["tipo"]);
-
-                    lstRetorno.Add(ett);
-                }
-            }
-
-            return lstRetorno;
+            return lista;
         }
 
-        public List<DistanciaViagemDTO> GetDistanciaViagem(string DataConsulta)
+        public List<Models.DistanciaViagem> GetDistanciaViagem(int radarInicio, int radarFinal)
         {
-            List<DistanciaViagemDTO> lstRetorno = new List<DistanciaViagemDTO>();
+            List<Models.DistanciaViagem> lista = new List<Models.DistanciaViagem>();
 
-            using (Npgsql.NpgsqlConnection conn = new Npgsql.NpgsqlConnection(connString))
-            {
-                Npgsql.NpgsqlCommand comm = conn.CreateCommand();
-                comm.CommandTimeout = 420;
-
-                comm.CommandType = CommandType.Text;
-                comm.CommandText = "select distinct v.inicio,\n" +
-                                   "v.final,\n" +
-                                   "ST_Distance(ST_Transform(concat('SRID=4326;POINT(', cast(br0.lat as varchar(20)), ' ', cast(br0.lon as varchar(20)), ')')::geometry, 3857),\n" +
-                                   "ST_Transform(concat('SRID=4326;POINT(', cast(br1.lat as varchar(20)), ' ', cast(br1.lon as varchar(20)), ')')::geometry, 3857)) * cosd(42.3521) as distancia\n" +
-                "from viagens v\n" +
-                "inner join base_radares_lat_lon br0\n" +
-                "   on br0.codigo = v.inicio\n" +
-                "inner join base_radares_lat_lon br1\n" +
-                "   on br1.codigo = v.final\n" +
-                "where cast(v.data_inicio as date) = '" + DataConsulta + "'\n" +
-                "and v.inicio != v.final; ";
-
-                conn.Open();
-
-                Npgsql.NpgsqlDataReader dr = comm.ExecuteReader();
-
-                while (dr.Read())
-                {
-                    DistanciaViagemDTO ett = new DistanciaViagemDTO();
-
-                    ett.codigoRadarInicio = Convert.ToInt32(dr["inicio"]);
-                    ett.codigoRadarFinal = Convert.ToInt32(dr["final"]);
-                    ett.distancia = Convert.ToDecimal(dr["distancia"]);
-
-                    lstRetorno.Add(ett);
-                }
-            }
-
-            return lstRetorno;
+            var achado = _ctxView.DistanciaViagem.Where(k => k.RadarInicial == radarInicio && k.RadarFinal == radarFinal).FirstOrDefault();
+            lista.Add(achado);
+            
+            return lista;
         }
 
-        public bool VerificaChaveTaValida(string chave)
-        {
-            return _ctx.Chaves.Where(c => c.Token.Equals(chave)).Any();
-        }
-
-        public bool UsuarioPodePedirMaisReq(string chave)
-        {
-            Chave chaveAchada = _ctx.Chaves.Where(c => c.Token.Equals(chave)).FirstOrDefault();
-            Usuario u = _ctx.Usuarios.Where(us => us.UsuarioId == chaveAchada.UsuarioId).FirstOrDefault();
-
-            if (u.ReqInfos.LastOrDefault().QtdReqFeitasNoDia < u.ReqInfos.LastOrDefault().QtdReqDiaMax && u.Bloqueado == false)
-            {
-                return true;
-            }
-
-            return false;
-        }
-
+        // ===== FUNCOES ========
         public async Task LogRequest(string Usuario, string Endpoint, long TempoRequisicao)
         {
             using (Npgsql.NpgsqlConnection conn = new Npgsql.NpgsqlConnection(connString))
@@ -700,6 +255,31 @@ namespace MilenioRadartonaAPI.Repository
                 await comm.ExecuteNonQueryAsync();
 
             }
+        }
+
+        public async Task<int> QtdRequestsDia(string Usuario)
+        {
+            int Requests = 0;
+
+            using (Npgsql.NpgsqlConnection conn = new Npgsql.NpgsqlConnection(connString))
+            {
+                Npgsql.NpgsqlCommand comm = conn.CreateCommand();
+
+                comm.CommandType = CommandType.Text;
+                comm.CommandText = "SELECT COUNT(1) AS Requests FROM LogRequest WHERE Usuario = '" + Usuario + "' and cast(datarequest as date) = '" + DateTime.Now.ToString("yyyy-MM-dd") + "'";
+
+                conn.Open();
+
+                Npgsql.NpgsqlDataReader dr = await comm.ExecuteReaderAsync();
+
+                while (dr.Read())
+                {
+                    Requests = Convert.ToInt32(dr["Requests"]);
+                }
+
+            }
+
+            return Requests;
         }
 
 
@@ -725,37 +305,35 @@ namespace MilenioRadartonaAPI.Repository
                 while (dr.Read())
                 {
                     string linha = String.Empty;
-
-                    linha += dr["lote"].ToString() + ";";
-                    linha += dr["codigo"].ToString() + ";";
-                    linha += dr["endereco"].ToString() + ";";
-                    linha += dr["sentido"].ToString() + ";";
-                    linha += dr["referencia"].ToString() + ";";
-                    linha += dr["tipo_equip"].ToString() + ";";
-                    linha += dr["enquadrame"].ToString() + ";";
+                    linha += "\"" + dr["lote"].ToString() + "\"" + ";";
+                    linha += "\"" + dr["codigo"].ToString() + "\"" + ";";
+                    linha += "\"" + dr["endereco"].ToString() + "\"" + ";";
+                    linha += "\"" + dr["sentido"].ToString() + "\"" + ";";
+                    linha += "\"" + dr["referencia"].ToString() + "\"" + ";";
+                    linha += "\"" + dr["tipo_equip"].ToString() + "\"" + ";";
+                    linha += "\"" + dr["enquadrame"].ToString() + "\"" + ";";
                     try
                     {
                         linha += dr["qtde_fxs_f"].ToString() + ";";
                     }
                     catch { linha += ";"; }
 
-                    linha += dr["data_publi"].ToString() + ";";
-                    linha += dr["velocidade"].ToString() + ";";
-                    linha += dr["lat"].ToString() + ";";
-                    linha += dr["lon"].ToString() + ";";
-                    linha += dr["bairro"].ToString() + ";";
+                    linha += "\"" + dr["data_publi"].ToString() + "\"" + ";";
+                    linha += "\"" + dr["velocidade"].ToString() + "\"" + ";";
+                    linha += "\"" + dr["lat"].ToString().Replace(".", ",") + "\"" + ";";
+                    linha += "\"" + dr["lon"].ToString().Replace(".", ",") + "\"" + ";";
+                    linha += "\"" + dr["bairro"].ToString() + "\"" + ";";
 
 
                     sb.AppendLine(linha);
                 }
             }
 
-            byte[] csv = Encoding.Default.GetBytes(sb.ToString());
-
+            byte[] csv = Encoding.Unicode.GetBytes(sb.ToString());
             return csv;
         }
 
-        public byte[] GetRadaresTipoEnquadramentoCSV(string[] Enquadramentos)
+        public byte[] GetRadaresTipoEnquadramentoCSV(string[] Enquadramentos) // TODO: usar o parametro para a requisicao
         {
             List<BaseRadaresDTO> lstRadares = new List<BaseRadaresDTO>();
             StringBuilder sb = new StringBuilder();
@@ -779,47 +357,58 @@ namespace MilenioRadartonaAPI.Repository
                 while (dr.Read())
                 {
                     BaseRadaresDTO ett = new BaseRadaresDTO();
-                    ett.lote = Convert.ToInt32(dr["lote"]);
-                    ett.codigo = dr["codigo"].ToString();
-                    ett.endereco = dr["endereco"].ToString();
-                    ett.sentido = dr["sentido"].ToString();
-                    ett.referencia = dr["referencia"].ToString();
-                    ett.tipoEquipamento = dr["tipo_equip"].ToString();
-                    ett.enquadramento = dr["enquadrame"].ToString();
+                    ett.Lote = Convert.ToInt32(dr["lote"]);
+                    ett.Codigo = dr["codigo"].ToString();
+                    ett.Endereco = dr["endereco"].ToString();
+                    ett.Sentido = dr["sentido"].ToString();
+                    ett.Referencia = dr["referencia"].ToString();
+                    ett.TipoEquipamento = dr["tipo_equip"].ToString();
+                    ett.Enquadramento = dr["enquadrame"].ToString();
 
                     try
                     {
-                        ett.qtdeFaixas = Convert.ToInt32(dr["qtde_fxs_f"]);
+                        ett.QtdeFaixas = Convert.ToInt32(dr["qtde_fxs_f"]);
                     }
-                    catch { ett.qtdeFaixas = 0; }
+                    catch { ett.QtdeFaixas = 0; }
 
-                    ett.dataPublicacao = dr["data_publi"].ToString();
-                    ett.velocidade = dr["velocidade"].ToString();
-                    ett.lat = dr["lat"].ToString();
-                    ett.lon = dr["lon"].ToString();
-                    ett.bairro = dr["bairro"].ToString();
+                    ett.DataPublicacao = dr["data_publi"].ToString();
+                    ett.Velocidade = dr["velocidade"].ToString();
+                    ett.Lat = dr["lat"].ToString();
+                    ett.Lon = dr["lon"].ToString();
+                    ett.Bairro = dr["bairro"].ToString();
 
                     lstRadares.Add(ett);
                 }
             }
 
-            lstRadares = lstRadares.Where(d => Enquadramentos.Any(e => d.enquadramento.Split("-").Contains(e))).ToList();
+            lstRadares = lstRadares.Where(d => Enquadramentos.Any(e => d.Enquadramento.Split("-").Contains(e))).ToList();
 
             foreach (BaseRadaresDTO ett in lstRadares)
             {
-                linha += ett.lote + ";" + ett.codigo + ";" + ett.endereco + ";" + ett.sentido + ";" + ett.referencia + ";" +
-                    ett.tipoEquipamento + ";" + ett.enquadramento + ";" + ett.qtdeFaixas + ";" + ett.dataPublicacao + ";" +
-                    ett.velocidade + ";" + ett.lat.ToString() + ";" + ett.lon.ToString() + ";" + ett.bairro + ";";
+                linha += "\"" + ett.Lote.ToString() + "\"" + ";";
+                linha += "\"" + ett.Codigo + "\"" + ";";
+                linha += "\"" + ett.Endereco + "\"" + ";";
+                linha += "\"" + ett.Sentido + "\"" + ";";
+                linha += "\"" + ett.Referencia + "\"" + ";";
+                linha += "\"" + ett.TipoEquipamento + "\"" + ";";
+                linha += "\"" + ett.Enquadramento + "\"" + ";";
+                linha += "\"" + ett.QtdeFaixas.ToString() + "\"" + ";";
+                linha += "\"" + ett.DataPublicacao + "\"" + ";";
+                linha += "\"" + ett.Velocidade + "\"" + ";";
+                linha += "\"" + ett.Lat.Replace(".",",") + "\"" + ";";
+                linha += "\"" + ett.Lon.Replace(".", ",") + "\"" + ";";
+                linha += "\"" + ett.Bairro + "\"" + ";";
 
                 sb.AppendLine(linha);
+                linha = String.Empty;
             }
 
-            byte[] csv = Encoding.Default.GetBytes(sb.ToString());
+            byte[] csv = Encoding.Unicode.GetBytes(sb.ToString());
 
             return csv;
         }
 
-        public byte[] GetRadaresZonaConcessaoCSV(string ZonaConcessao)
+        public byte[] GetRadaresLoteCSV(int lote)
         {
             StringBuilder sb = new StringBuilder();
             sb.AppendLine("lote;codigo;endereco;sentido;referencia;tipo_equip;enquadrame;qtde_fxs_f;data_publi;velocidade;lat;lon;bairro;");
@@ -832,7 +421,7 @@ namespace MilenioRadartonaAPI.Repository
 
                 comm.CommandType = CommandType.Text;
                 comm.CommandText = "select lote, codigo, endereco, sentido, referencia, tipo_equip, enquadrame, qtde_fxs_f,  \n" +
-                                   "data_publi, velocidade, lat, lon, bairro  from \"BaseRadares\" b where bairro = '" + ZonaConcessao + "';";
+                                   "data_publi, velocidade, lat, lon, bairro  from \"BaseRadares\" b where lote = '" + lote + "';"; //TODO: tirar a concatenacao pra evitar SQL injection
 
                 conn.Open();
 
@@ -840,31 +429,31 @@ namespace MilenioRadartonaAPI.Repository
 
                 while (dr.Read())
                 {
-                    string linha = "";
-                    linha += dr["lote"].ToString() + ";";
-                    linha += dr["codigo"].ToString() + ";";
-                    linha += dr["endereco"].ToString() + ";";
-                    linha += dr["sentido"].ToString() + ";";
-                    linha += dr["referencia"].ToString() + ";";
-                    linha += dr["tipo_equip"].ToString() + ";";
-                    linha += dr["enquadrame"].ToString() + ";";
+                    string linha = String.Empty;
+                    linha += "\"" + dr["lote"].ToString() + "\"" + ";";
+                    linha += "\"" + dr["codigo"].ToString() + "\"" + ";";
+                    linha += "\"" + dr["endereco"].ToString() + "\"" + ";";
+                    linha += "\"" + dr["sentido"].ToString() + "\"" + ";";
+                    linha += "\"" + dr["referencia"].ToString() + "\"" + ";";
+                    linha += "\"" + dr["tipo_equip"].ToString() + "\"" + ";";
+                    linha += "\"" + dr["enquadrame"].ToString() + "\"" + ";";
 
                     try
                     {
-                        linha += dr["qtde_fxs_f"].ToString() + ";";
+                        linha += "\"" + dr["qtde_fxs_f"].ToString() + "\"" + ";";
                     }
                     catch { linha += ";"; }
 
-                    linha += dr["data_publi"].ToString() + ";";
-                    linha += dr["velocidade"].ToString() + ";";
-                    linha += dr["lat"].ToString() + ";";
-                    linha += dr["lon"].ToString() + ";";
-                    linha += dr["bairro"].ToString() + ";";
+                    linha += "\"" + dr["data_publi"].ToString() + "\"" + ";";
+                    linha += "\"" + dr["velocidade"].ToString() + "\"" + ";";
+                    linha += "\"" + dr["lat"].ToString().Replace(".",",") + "\"" + ";";
+                    linha += "\"" + dr["lon"].ToString().Replace(".", ",") + "\"" + ";";
+                    linha += "\"" + dr["bairro"].ToString() + "\"" + ";";
 
                     sb.AppendLine(linha);
                 }
 
-                byte[] csv = Encoding.Default.GetBytes(sb.ToString());
+                byte[] csv = Encoding.Unicode.GetBytes(sb.ToString());
 
                 return csv;
             }
@@ -885,7 +474,7 @@ namespace MilenioRadartonaAPI.Repository
                                    "b.velocidade, b.lat, b.lon, b.bairro\n" +
                                    "from contagens c inner join \"BaseRadares\" b \n" +
                                    "on b.codigo like concat('%', c.localidade, '%')\n" +
-                                   "where cast(c.data_e_hora as date) = '" + DataConsulta + "'\n" +
+                                   "where cast(c.data_e_hora as date) = '" + DataConsulta + "'\n" + //TODO: tirar a concatenacao pra evitar SQL injection
                                    "and c.localidade in (";
 
                 for (int i = 0; i < Radares.Count(); i++)
@@ -909,22 +498,23 @@ namespace MilenioRadartonaAPI.Repository
                 while (dr.Read())
                 {
                     string linha = "";
-                    linha += dr["codigo"].ToString() + ";";
-                    linha += dr["data_hora"].ToString() + ";";
-                    linha += dr["tipo_veiculo"].ToString() + ";";
-                    linha += dr["contagem"].ToString() + ";";
-                    linha += dr["autuacoes"].ToString() + ";";
-                    linha += dr["placas"].ToString() + ";";
-                    linha += dr["qtde_faixas"].ToString() + ";";
-                    linha += dr["lat"].ToString() + ";";
-                    linha += dr["lon"].ToString() + ";";
-                    linha += dr["bairro"].ToString() + ";";
-
+                    linha += "\"" + dr["codigo"].ToString() + "\"" + ";";
+                    linha += "\"" + dr["data_hora"].ToString() + "\"" + ";";
+                    linha += "\"" + dr["tipo_veiculo"].ToString() + "\"" + ";";
+                    linha += "\"" + dr["contagem"].ToString() + "\"" + ";";
+                    linha += "\"" + dr["autuacoes"].ToString() + "\"" + ";";
+                    linha += "\"" + dr["placas"].ToString() + "\"" + ";";
+                    linha += "\"" + dr["qtde_faixas"].ToString() + "\"" + ";";
+                    linha += "\"" + dr["lat"].ToString().Replace(".",",") + "\"" + ";";
+                    linha += "\"" + dr["lon"].ToString().Replace(".", ",") + "\"" + ";";
+                    linha += "\"" + dr["bairro"].ToString() + "\"" + ";";
+                    linha += "\"" + dr["codigo"].ToString() + "\"" + ";";
+                    linha += "\"" + dr["codigo"].ToString() + "\"" + ";";
                     sb.AppendLine(linha);
                 }
             }
 
-            byte[] csv = Encoding.Default.GetBytes(sb.ToString());
+            byte[] csv = Encoding.Unicode.GetBytes(sb.ToString());
 
             return csv;
         }
@@ -946,7 +536,7 @@ namespace MilenioRadartonaAPI.Repository
                 {
                     if (i == 0)
                     {
-                        comm.CommandText += "'" + Radares[i] + "'";
+                        comm.CommandText += "'" + Radares[i] + "'"; //TODO: tirar a concatenacao pra evitar SQL injection
                     }
                     else
                     {
@@ -964,17 +554,17 @@ namespace MilenioRadartonaAPI.Repository
                 {
                     string linha = "";
 
-                    linha += dr["codigo"].ToString() + ";";
-                    linha += dr["data_hora"].ToString() + ";";
-                    linha += dr["contagem"].ToString() + ";";
-                    linha += dr["autuacoes"].ToString() + ";";
-                    linha += dr["placas"].ToString() + ";";
+                    linha += "\"" + dr["codigo"].ToString() + "\"" + ";";
+                    linha += "\"" + dr["data_hora"].ToString() + "\"" + ";";
+                    linha += "\"" + dr["contagem"].ToString() + "\"" + ";";
+                    linha += "\"" + dr["autuacoes"].ToString() + "\"" + ";";
+                    linha += "\"" + dr["placas"].ToString() + "\"" + ";";
 
                     sb.AppendLine(linha);
                 }
             }
 
-            byte[] csv = Encoding.Default.GetBytes(sb.ToString());
+            byte[] csv = Encoding.Unicode.GetBytes(sb.ToString());
 
             return csv;
         }
@@ -990,7 +580,7 @@ namespace MilenioRadartonaAPI.Repository
                 comm.CommandTimeout = 420;
 
                 comm.CommandType = CommandType.Text;
-                comm.CommandText = "select id,data_e_hora,localidade,tipo,contagem,autuacoes,placas from contagens where cast(data_e_hora as date) = '" + DataConsulta + "' and localidade in (";
+                comm.CommandText = "select id,data_e_hora,localidade,tipo,contagem,autuacoes,placas from contagens where cast(data_e_hora as date) = '" + DataConsulta + "' and localidade in ("; //TODO: tirar a concatenacao pra evitar SQL injection
 
                 for (int i = 0; i < Radares.Count(); i++)
                 {
@@ -1013,18 +603,18 @@ namespace MilenioRadartonaAPI.Repository
                 while (dr.Read())
                 {
                     string linha = "";
-                    linha += dr["localidade"].ToString() + ";";
-                    linha += dr["data_e_hora"].ToString() + ";";
-                    linha += dr["tipo"].ToString() + ";";
-                    linha += dr["contagem"].ToString() + ";";
-                    linha += dr["autuacoes"].ToString() + ";";
-                    linha += dr["placas"].ToString() + ";";
+                    linha += "\"" + dr["localidade"].ToString() + "\"" + ";";
+                    linha += "\"" + dr["data_e_hora"].ToString() + "\"" + ";";
+                    linha += "\"" + dr["tipo"].ToString() + "\"" + ";";
+                    linha += "\"" + dr["contagem"].ToString() + "\"" + ";";
+                    linha += "\"" + dr["autuacoes"].ToString() + "\"" + ";";
+                    linha += "\"" + dr["placas"].ToString() + "\"" + ";";
 
                     sb.AppendLine(linha);
                 }
             }
 
-            byte[] csv = Encoding.Default.GetBytes(sb.ToString());
+            byte[] csv = Encoding.Unicode.GetBytes(sb.ToString());
 
             return csv;
         }
@@ -1041,13 +631,13 @@ namespace MilenioRadartonaAPI.Repository
 
                 comm.CommandType = CommandType.Text;
                 comm.CommandText = "select localidade as codigo, data_e_hora, tipo, contagem, placas, cast(placas as decimal)/cast(contagem as decimal) as acuracia_identificacao\n" +
-                                   "from contagens where cast(data_e_hora as date) = '" + DataConsulta + "' and localidade in (";
+                                   "from contagens where cast(data_e_hora as date) = '" + DataConsulta + "' and localidade in ("; //TODO: tirar a concatenacao pra evitar SQL injection
 
                 for (int i = 0; i < Radares.Count(); i++)
                 {
                     if (i == 0)
                     {
-                        comm.CommandText += "'" + Radares[i] + "'";
+                        comm.CommandText += "'" + Radares[i] + "'"; //TODO: tirar a concatenacao pra evitar SQL injection
                     }
                     else
                     {
@@ -1065,18 +655,18 @@ namespace MilenioRadartonaAPI.Repository
                 {
                     string linha = "";
 
-                    linha += dr["codigo"].ToString() + ";";
-                    linha += dr["data_e_hora"].ToString() + ";";
-                    linha += dr["tipo"].ToString() + ";";
-                    linha += dr["contagem"].ToString() + ";";
-                    linha += dr["placas"].ToString() + ";";
-                    linha += dr["acuracia_identificacao"].ToString() + ";";
+                    linha += "\"" + dr["codigo"].ToString() + "\"" + ";";
+                    linha += "\"" + dr["data_e_hora"].ToString() + "\"" + ";";
+                    linha += "\"" + dr["tipo"].ToString() + "\"" + ";";
+                    linha += "\"" + dr["contagem"].ToString() + "\"" + ";";
+                    linha += "\"" + dr["placas"].ToString() + "\"" + ";";
+                    linha += "\"" + dr["acuracia_identificacao"].ToString() + "\"" + ";";
 
                     sb.AppendLine(linha);
                 }
             }
 
-            byte[] csv = Encoding.Default.GetBytes(sb.ToString());
+            byte[] csv = Encoding.Unicode.GetBytes(sb.ToString());
 
             return csv;
         }
@@ -1093,7 +683,7 @@ namespace MilenioRadartonaAPI.Repository
 
                 comm.CommandType = CommandType.Text;
                 comm.CommandText = "select lote, codigo, endereco, sentido, referencia, tipo_equip, enquadrame, qtde_fxs_f,  \n" +
-                                   "data_publi, velocidade, lat, lon, bairro  from \"BaseRadares\" b where velocidade_carro_moto between " + VelocidadeMin.ToString() + " and " + VelocidadeMax + ";";
+                                   "data_publi, velocidade, lat, lon, bairro  from \"BaseRadares\" b where velocidade_carro_moto between " + VelocidadeMin.ToString() + " and " + VelocidadeMax + ";"; //TODO: tirar a concatenacao pra evitar SQL injection
 
                 conn.Open();
 
@@ -1103,25 +693,25 @@ namespace MilenioRadartonaAPI.Repository
                 {
                     string linha = "";
 
-                    linha += dr["lote"].ToString() + ";";
-                    linha += dr["codigo"].ToString() + ";";
-                    linha += dr["endereco"].ToString() + ";";
-                    linha += dr["sentido"].ToString() + ";";
-                    linha += dr["referencia"].ToString() + ";";
-                    linha += dr["tipo_equip"].ToString() + ";";
-                    linha += dr["enquadrame"].ToString() + ";";
-                    linha += dr["qtde_fxs_f"].ToString() + ";";
-                    linha += dr["data_publi"].ToString() + ";";
-                    linha += dr["velocidade"].ToString() + ";";
-                    linha += dr["lat"].ToString() + ";";
-                    linha += dr["lon"].ToString() + ";";
-                    linha += dr["bairro"].ToString() + ";";
+                    linha += "\"" + dr["lote"].ToString() + "\"" + ";";
+                    linha += "\"" + dr["codigo"].ToString() + "\"" + ";";
+                    linha += "\"" + dr["endereco"].ToString() + "\"" + ";";
+                    linha += "\"" + dr["sentido"].ToString() + "\"" + ";";
+                    linha += "\"" + dr["referencia"].ToString() + "\"" + ";";
+                    linha += "\"" + dr["tipo_equip"].ToString() + "\"" + ";";
+                    linha += "\"" + dr["enquadrame"].ToString() + "\"" + ";";
+                    linha += "\"" + dr["qtde_fxs_f"].ToString() + "\"" + ";";
+                    linha += "\"" + dr["data_publi"].ToString() + "\"" + ";";
+                    linha += "\"" + dr["velocidade"].ToString() + "\"" + ";";
+                    linha += "\"" + dr["lat"].ToString().Replace(".",",") + "\"" + ";";
+                    linha += "\"" + dr["lon"].ToString().Replace(".", ",") + "\"" + ";";
+                    linha += "\"" + dr["bairro"].ToString() + "\"" + ";";
 
                     sb.AppendLine(linha);
                 }
             }
 
-            byte[] csv = Encoding.Default.GetBytes(sb.ToString());
+            byte[] csv = Encoding.Unicode.GetBytes(sb.ToString());
 
             return csv;
         }
@@ -1168,7 +758,7 @@ namespace MilenioRadartonaAPI.Repository
                                             "t.destino,\n" +
                                             "avg(t.v1) as media_v1\n" +
                                     "from trajetos t\n" +
-                                    "where cast(data_inicio as date) = '" + DataConsulta + "'\n" +
+                                    "where cast(data_inicio as date) = '" + DataConsulta + "'\n" + //TODO: tirar a concatenacao pra evitar SQL injection
                                     "and (t.origem in " + InClause + " or t.destino in " + InClause + ")\n" +
                                     "group by t.viagem_id, t.origem, periodo_dia, t.destino;";
 
@@ -1180,18 +770,18 @@ namespace MilenioRadartonaAPI.Repository
                 {
                     string linha = "";
 
-                    linha += Convert.ToInt32(dr["origem"]) + ";";
-                    linha += Convert.ToDecimal(dr["media_v0"]) + ";";
-                    linha += dr["periodo_dia"].ToString() + ";";
-                    linha += Convert.ToDecimal(dr["media_minutos_trajeto"]) + ";";
-                    linha += Convert.ToInt32(dr["destino"]) + ";";
-                    linha += Convert.ToDecimal(dr["media_v1"]) + ";";
+                    linha += "\"" + Convert.ToInt32(dr["origem"]) + "\"" + ";";
+                    linha += "\"" + Convert.ToDecimal(dr["media_v0"]) + "\"" + ";";
+                    linha += "\"" + dr["periodo_dia"].ToString() + "\"" + ";";
+                    linha += "\"" + Convert.ToDecimal(dr["media_minutos_trajeto"]) + "\"" + ";";
+                    linha += "\"" + Convert.ToInt32(dr["destino"]) + "\"" + ";";
+                    linha += "\"" + Convert.ToDecimal(dr["media_v1"]) + "\"" + ";";
 
                     sb.AppendLine(linha);
                 }
             }
 
-            byte[] csv = Encoding.Default.GetBytes(sb.ToString());
+            byte[] csv = Encoding.Unicode.GetBytes(sb.ToString());
 
             return csv;
         }
@@ -1235,7 +825,7 @@ namespace MilenioRadartonaAPI.Repository
                                                     "avg((t.v0 + t.v1) / 2 ) as velocidade_media,\n" +
                                                     "t.destino\n" +
                                             "from trajetos t\n" +
-                                            "where cast(data_inicio as date) = '" + DataConsulta + "'\n" +
+                                            "where cast(data_inicio as date) = '" + DataConsulta + "'\n" + //TODO: tirar a concatenacao pra evitar SQL injection
                                             "and (t.origem in " + InClause + " or t.destino in " + InClause + ")\n" +
                                             "group by t.viagem_id, t.origem, periodo_dia, t.destino;";
 
@@ -1247,16 +837,16 @@ namespace MilenioRadartonaAPI.Repository
                 {
                     string linha = "";
 
-                    linha += dr["origem"].ToString() + ";";
-                    linha += dr["periodo_dia"].ToString() + ";";
-                    linha += dr["velocidade_media"].ToString() + ";";
-                    linha += dr["destino"].ToString() + ";";
+                    linha += "\"" + dr["origem"].ToString() + "\"" + ";";
+                    linha += "\"" + dr["periodo_dia"].ToString() + "\"" + ";";
+                    linha += "\"" + dr["velocidade_media"].ToString() + "\"" + ";";
+                    linha += "\"" + dr["destino"].ToString() + "\"" + ";";
 
                     sb.AppendLine(linha);
                 }
             }
 
-            byte[] csv = Encoding.Default.GetBytes(sb.ToString());
+            byte[] csv = Encoding.Unicode.GetBytes(sb.ToString());
 
             return csv;
         }
@@ -1271,7 +861,8 @@ namespace MilenioRadartonaAPI.Repository
             {
                 if (i == 0)
                 {
-                    InClause += "'" + Radares[i] + "'";
+                    InClause += "'" + Radares[i] + "'"; //TODO: tirar a concatenacao pra evitar SQL injection
+
                 }
                 else
                 {
@@ -1301,23 +892,23 @@ namespace MilenioRadartonaAPI.Repository
                 {
                     string linha = "";
 
-                    linha += dr["id"].ToString() + ";";
-                    linha += dr["inicio"].ToString() + ";";
-                    linha += dr["data_inicio"].ToString() + ";";
-                    linha += dr["final"].ToString() + ";";
-                    linha += dr["data_final"].ToString() + ";";
-                    linha += dr["tipo"].ToString() + ";";
+                    linha += "\"" + dr["id"].ToString() + "\"" + ";";
+                    linha += "\"" + dr["inicio"].ToString() + "\"" + ";";
+                    linha += "\"" + dr["data_inicio"].ToString() + "\"" + ";";
+                    linha += "\"" + dr["final"].ToString() + "\"" + ";";
+                    linha += "\"" + dr["data_final"].ToString() + "\"" + ";";
+                    linha += "\"" + dr["tipo"].ToString() + "\"" + ";";
 
                     sb.AppendLine(linha);
                 }
             }
 
-            byte[] csv = Encoding.Default.GetBytes(sb.ToString());
+            byte[] csv = Encoding.Unicode.GetBytes(sb.ToString());
 
             return csv;
         }
 
-        public byte[] GetDistanciaViagemCSV(string DataConsulta)
+        public byte[] GetDistanciaViagemCSV(int radarInicial, int radarFinal)
         {
             StringBuilder sb = new StringBuilder();
             sb.AppendLine("inicio;final;distancia;");
@@ -1328,17 +919,13 @@ namespace MilenioRadartonaAPI.Repository
                 comm.CommandTimeout = 420;
 
                 comm.CommandType = CommandType.Text;
-                comm.CommandText = "select distinct v.inicio,\n" +
-                                   "v.final,\n" +
-                                   "ST_Distance(ST_Transform(concat('SRID=4326;POINT(', cast(br0.lat as varchar(20)), ' ', cast(br0.lon as varchar(20)), ')')::geometry, 3857),\n" +
-                                   "ST_Transform(concat('SRID=4326;POINT(', cast(br1.lat as varchar(20)), ' ', cast(br1.lon as varchar(20)), ')')::geometry, 3857)) * cosd(42.3521) as distancia\n" +
-                "from viagens v\n" +
-                "inner join base_radares_lat_lon br0\n" +
-                "   on br0.codigo = v.inicio\n" +
-                "inner join base_radares_lat_lon br1\n" +
-                "   on br1.codigo = v.final\n" +
-                "where cast(v.data_inicio as date) = '" + DataConsulta + "'\n" +
-                "and v.inicio != v.final; ";
+                comm.CommandText =
+                    "select br0.codigo as RadarInicio, " +
+                    "br1.codigo as RadarFinal, " +
+                    "ST_Distance(ST_Transform(concat('SRID=4326;POINT(', cast(br0.lat as varchar(20)), ' ', cast(br0.lon as varchar(20)), ')')::geometry, 3857), " +
+                    "ST_Transform(concat('SRID=4326;POINT(', cast(br1.lat as varchar(20)), ' ', cast(br1.lon as varchar(20)), ')')::geometry, 3857)) * cosd(42.3521) as distancia " +
+                    "from base_radares_lat_lon br0 inner join base_radares_lat_lon br1 " +
+                    "on br1.codigo = " + radarFinal + " where br0.codigo = " + radarInicial + "; ";
 
                 conn.Open();
 
@@ -1348,16 +935,16 @@ namespace MilenioRadartonaAPI.Repository
                 {
                     string linha = "";
                     
-                    linha += dr["inicio"].ToString() + ";";
-                    linha += dr["final"].ToString() + ";";
-                    linha += dr["distancia"].ToString() + ";";
+                    linha += "\"" + dr["RadarInicio"].ToString() + "\"" + ";";
+                    linha += "\"" + dr["RadarFinal"].ToString() + "\"" + ";";
+                    linha += "\"" + dr["distancia"].ToString() + "\"" + ";";
 
                     sb.AppendLine(linha);
                 }
             }
 
 
-            byte[] csv = Encoding.Default.GetBytes(sb.ToString());
+            byte[] csv = Encoding.Unicode.GetBytes(sb.ToString());
 
             return csv;
         }

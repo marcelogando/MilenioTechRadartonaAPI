@@ -1,4 +1,4 @@
-# Milênio Bus - RadartonaAPI
+﻿# Milênio Bus - RadartonaAPI
 
 ## Apresentação
 
@@ -68,11 +68,11 @@ $ pytest
 
 ### UML Banco de Dados - Data Lake
 
-![datalake](https://raw.githubusercontent.com/marcelogando/RadartonaAPI/master/MilenioRadartonaAPI/Presentation/datalake-ultimato.png)
+![datalake](/MilenioRadartonaAPI/Presentation/datalake-ultimato.png)
 
 ## Casos de uso da API
 
-![casos_uso](https://raw.githubusercontent.com/marcelogando/RadartonaAPI/master/MilenioRadartonaAPI/Presentation/caseuser.png)
+![casos_uso](/MilenioRadartonaAPI/Presentation/casos_de_uso.jpg)
 
 ## Documentação
 

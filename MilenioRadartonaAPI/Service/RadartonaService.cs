@@ -3,33 +3,35 @@ using MilenioRadartonaAPI.Models;
 using MilenioRadartonaAPI.Models.Postgres;
 using MilenioRadartonaAPI.Relatorios;
 using MilenioRadartonaAPI.Repository;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace Service
 {
     public interface IRadartonaService
     {
-        List<BaseRadaresDTO> GetRadaresTipoEnquadramento(string Enquadramento);
         List<BaseRadaresDTO> GetLocalizacaoRadares();
-        List<BaseRadaresDTO> GetRadaresZonaConcessao(string ZonaConcessao);
-        List<FluxoVeiculosRadarDTO> GetFluxoVeiculosRadares(string Radares, string DataConsulta);
-        List<TipoVeiculosRadaresDTO> GetTipoVeiculosRadares(string Radares, string DataConsulta);
-        List<InfracoesPorRadarDTO> GetInfracoesPorRadar(string Radares, string DataConsulta);
-        List<AcuraciaIdentificacaoRadaresDTO> GetAcuraciaIdentificacaoRadares(string Radares, string DataConsulta);
+        List<BaseRadaresDTO> GetRadaresTipoEnquadramento(string enquadramento);
+        List<BaseRadaresDTO> GetRadaresLote(int lote);
+        List<BaseRadaresJoinContagemDTO> GetFluxoVeiculosRadares(string radares, string dataConsulta);
+        List<BaseRadaresJoinContagemPequenoDTO> GetTipoVeiculosRadares(string Radares, string DataConsulta);
+        List<BaseRadaresJoinContagemPequenoDTO2> GetInfracoesPorRadar(string Radares, string DataConsulta);
+        List<BaseRadaresJoinContagemPequenoDTO3> GetAcuraciaIdentificacaoRadares(string Radares, string DataConsulta);
         List<BaseRadaresDTO> GetPerfilVelocidadesRadar(int VelocidadeMin, int VelocidadeMax);
-        List<TrajetosDTO> GetTrajetos(string DataConsulta, string Radares);
-        List<VelocidadeMediaTrajetoDTO> GetVelocidadeMediaTrajeto(string DataConsulta, string Radares);
+        List<Trajeto> GetTrajetos(string DataConsulta, string Radares);
+        List<TrajetoVelocidadeMedia> GetVelocidadeMediaTrajeto(string DataConsulta, string Radares);
         List<ViagensDTO> GetViagens(string DataConsulta, string Radares);
-        List<DistanciaViagemDTO> GetDistanciaViagem(string DataConsulta);
+        List<DistanciaViagemDTO> GetDistanciaViagem(int radarInicial, int radarFinal);
         Task LogRequest(string Usuario, string Endpoint, long TempoRequisicao);
 
         // ======= CSV =======
         byte[] GetLocalizacaoRadaresCSV();
         byte[] GetRadaresTipoEnquadramentoCSV(string Enquadramento);
-        byte[] GetRadaresZonaConcessaoCSV(string ZonaConcessao);
+        byte[] GetRadaresLoteCSV(int lote);
         byte[] GetFluxoVeiculosRadaresCSV(string Radares, string DataConsulta);
         byte[] GetTipoVeiculosRadaresCSV(string Radares, string DataConsulta);
         byte[] GetInfracoesPorRadarCSV(string Radares, string DataConsulta);
@@ -38,7 +40,9 @@ namespace Service
         byte[] GetTrajetosCSV(string DataConsulta, string Radares);
         byte[] GetVelocidadeMediaTrajetoCSV(string DataConsulta, string Radares);
         byte[] GetViagensCSV(string DataConsulta, string Radares);
-        byte[] GetDistanciaViagemCSV(string DataConsulta);
+        byte[] GetDistanciaViagemCSV(int radarInicial, int radarFinal);
+
+        Task<int> QtdRequestsDia(string Usuario);
     }
 
 
@@ -54,154 +58,454 @@ namespace Service
 
         public List<BaseRadaresDTO> GetLocalizacaoRadares()
         {
-            return _rep.GetLocalizacaoRadares();
+            try
+            {
+                var achado = _rep.GetLocalizacaoRadares();
+                List<BaseRadaresDTO> lista = JsonConvert.DeserializeObject<List<BaseRadaresDTO>>(achado.JsonRetorno);
+                return lista;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
         }
 
-        public List<BaseRadaresDTO> GetRadaresTipoEnquadramento(string Enquadramento)
+        public List<BaseRadaresDTO> GetRadaresTipoEnquadramento(string enquadramento)
         {
-            string[] Enquadramentos = Enquadramento.Split(",");
-            return _rep.GetRadaresTipoEnquadramento(Enquadramentos);
+            string[] Enquadramentos = enquadramento.Split(",");
+            var listaRetorno = _rep.GetRadaresTipoEnquadramento(Enquadramentos);
+            List<RadaresTipoEnquadramento> listaNormal = new List<RadaresTipoEnquadramento>();
+            List<BaseRadaresDTO> retornoMesmo = new List<BaseRadaresDTO>();
+
+            try {
+                foreach(List<RadaresTipoEnquadramento> re in listaRetorno)
+                {
+                    var array = re.ToArray();
+                    foreach (RadaresTipoEnquadramento ra in array)
+                    {
+                        List<BaseRadaresDTO> radares = JsonConvert.DeserializeObject<List<BaseRadaresDTO>>(ra.JsonRetorno);
+                        foreach (BaseRadaresDTO r in radares)
+                        {
+                            retornoMesmo.Add(r);
+                        }
+
+                    }
+                }
+                return retornoMesmo;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+
         }
 
-        public List<BaseRadaresDTO> GetRadaresZonaConcessao(string ZonaConcessao)
+
+        public List<BaseRadaresDTO> GetRadaresLote(int lote)
         {
-            return _rep.GetRadaresZonaConcessao(ZonaConcessao);
+            var lista = _rep.GetRadaresLote(lote);
+            try
+            {
+                List<BaseRadaresDTO> retorno = new List<BaseRadaresDTO>();
+                foreach (RadaresLote rad in lista)
+                {
+                    List<BaseRadaresDTO> radares = JsonConvert.DeserializeObject<List<BaseRadaresDTO>>(rad.JsonRetorno);
+                    foreach (BaseRadaresDTO radar in radares)
+                    {
+                        retorno.Add(radar);
+                    }
+                }
+
+                return retorno;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
         }
 
-        public List<FluxoVeiculosRadarDTO> GetFluxoVeiculosRadares(string Radares, string DataConsulta)
+        public List<BaseRadaresJoinContagemDTO> GetFluxoVeiculosRadares(string Radares, string DataConsulta)
         {
             string[] lstRadares = Radares.Split(",");
-            return _rep.GetFluxoVeiculosRadares(lstRadares, DataConsulta);
+            var retornoInicial = _rep.GetFluxoVeiculosRadares(lstRadares, DataConsulta);
+
+            try
+            {
+                List<BaseRadaresJoinContagemDTO> retorno = new List<BaseRadaresJoinContagemDTO>();
+                foreach (FluxoVeiculosRadares fvr in retornoInicial)
+                {
+                    List<BaseRadaresJoinContagemDTO> radares = JsonConvert.DeserializeObject<List<BaseRadaresJoinContagemDTO>>(fvr.JsonRetorno);
+                    foreach (BaseRadaresJoinContagemDTO radar in radares)
+                    {
+                        retorno.Add(radar);
+                    }
+                }
+                return retorno;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+
         }
 
-        public List<TipoVeiculosRadaresDTO> GetTipoVeiculosRadares(string Radares, string DataConsulta)
+
+        public List<BaseRadaresJoinContagemPequenoDTO> GetTipoVeiculosRadares(string Radares, string DataConsulta)
         {
             string[] lstRadares = Radares.Split(",");
-            return _rep.GetTipoVeiculosRadares(lstRadares, DataConsulta);
+            try
+            {
+                var retornoInicial = _rep.GetTipoVeiculosRadares(lstRadares, DataConsulta);
+
+                List<BaseRadaresJoinContagemPequenoDTO> retorno = new List<BaseRadaresJoinContagemPequenoDTO>();
+                foreach (TipoVeiculosRadares fvr in retornoInicial)
+                {
+                    List<BaseRadaresJoinContagemPequenoDTO> radares = JsonConvert.DeserializeObject<List<BaseRadaresJoinContagemPequenoDTO>>(fvr.JsonRetorno);
+                    foreach (BaseRadaresJoinContagemPequenoDTO radar in radares)
+                    {
+                        retorno.Add(radar);
+                    }
+                }
+
+                return retorno;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
         }
 
-        public List<InfracoesPorRadarDTO> GetInfracoesPorRadar(string Radares, string DataConsulta)
+        public List<BaseRadaresJoinContagemPequenoDTO2> GetInfracoesPorRadar(string Radares, string DataConsulta)
         {
             string[] lstRadares = Radares.Split(",");
-            return _rep.GetInfracoesPorRadar(lstRadares, DataConsulta);
+
+            try
+            {
+                var retornoInicial = _rep.GetInfracoesPorRadar(lstRadares, DataConsulta);
+
+                List<BaseRadaresJoinContagemPequenoDTO2> retorno = new List<BaseRadaresJoinContagemPequenoDTO2>();
+                foreach (InfracoesRadares fvr in retornoInicial)
+                {
+                    List<BaseRadaresJoinContagemPequenoDTO2> radares = JsonConvert.DeserializeObject<List<BaseRadaresJoinContagemPequenoDTO2>>(fvr.JsonRetorno);
+                    foreach (BaseRadaresJoinContagemPequenoDTO2 radar in radares)
+                    {
+                        retorno.Add(radar);
+                    }
+                }
+
+                return retorno;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
         }
 
-        public List<AcuraciaIdentificacaoRadaresDTO> GetAcuraciaIdentificacaoRadares(string Radares, string DataConsulta)
+
+        public List<BaseRadaresJoinContagemPequenoDTO3> GetAcuraciaIdentificacaoRadares(string Radares, string DataConsulta)
         {
             string[] lstRadares = Radares.Split(",");
-            return _rep.GetAcuraciaIdentificacaoRadares(lstRadares, DataConsulta);
+
+            try
+            {
+                var retornoInicial = _rep.GetAcuraciaIdentificacaoRadares(lstRadares, DataConsulta);
+
+                List<BaseRadaresJoinContagemPequenoDTO3> retorno = new List<BaseRadaresJoinContagemPequenoDTO3>();
+                foreach (AcuraciaIdentificacaoRadares fvr in retornoInicial)
+                {
+                    List<BaseRadaresJoinContagemPequenoDTO3> radares = JsonConvert.DeserializeObject<List<BaseRadaresJoinContagemPequenoDTO3>>(fvr.JsonRetorno);
+                    foreach (BaseRadaresJoinContagemPequenoDTO3 radar in radares)
+                    {
+                        retorno.Add(radar);
+                    }
+                }
+
+                return retorno;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
         }
 
         public List<BaseRadaresDTO> GetPerfilVelocidadesRadar(int VelocidadeMin, int VelocidadeMax)
         {
-            return _rep.GetPerfilVelocidadesRadar(VelocidadeMin, VelocidadeMax);
+            try
+            {
+                return _rep.GetPerfilVelocidadesRadar(VelocidadeMin, VelocidadeMax);
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
         }
 
-        public List<TrajetosDTO> GetTrajetos(string DataConsulta, string Radares)
+        public List<Trajeto> GetTrajetos(string DataConsulta, string Radares)
         {
             string[] lstRadares = Radares.Split(",");
-            return _rep.GetTrajetos(lstRadares, DataConsulta);
+            try
+            {
+                var retornoInicial = _rep.GetTrajetos(lstRadares, DataConsulta);
+
+                List<MilenioRadartonaAPI.DTO.Trajeto> retorno = new List<MilenioRadartonaAPI.DTO.Trajeto>();
+                foreach (MilenioRadartonaAPI.Models.Trajetos fvr in retornoInicial)
+                {
+                    List<Trajeto> radares = JsonConvert.DeserializeObject<List<Trajeto>>(fvr.JsonRetorno);
+                    foreach (Trajeto radar in radares)
+                    {
+                        retorno.Add(radar);
+                    }
+                }
+
+                return retorno;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+
         }
 
-        public List<VelocidadeMediaTrajetoDTO> GetVelocidadeMediaTrajeto(string DataConsulta, string Radares)
+        public List<TrajetoVelocidadeMedia> GetVelocidadeMediaTrajeto(string DataConsulta, string Radares)
         {
             string[] lstRadares = Radares.Split(",");
-            return _rep.GetVelocidadeMediaTrajeto(DataConsulta, lstRadares);
+            try
+            {
+                var retornoInicial = _rep.GetVelocidadeMediaTrajeto(lstRadares, DataConsulta);
+
+                List<TrajetoVelocidadeMedia> retorno = new List<TrajetoVelocidadeMedia>();
+                foreach (MilenioRadartonaAPI.Models.Trajetos fvr in retornoInicial)  // AQUI É OUTRO RETORNO VER QUAL RETORNO
+                {
+                    List<TrajetoVelocidadeMedia> radares = JsonConvert.DeserializeObject<List<TrajetoVelocidadeMedia>>(fvr.JsonRetorno);
+                    foreach (TrajetoVelocidadeMedia radar in radares)
+                    {
+                        retorno.Add(radar);
+                    }
+                }
+
+                return retorno;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
         }
+
 
         public List<ViagensDTO> GetViagens(string DataConsulta, string Radares)
         {
             string[] lstRadares = Radares.Split(",");
-            return _rep.GetViagens(DataConsulta, lstRadares);
+            try
+            {
+                var retornoInicial = _rep.GetViagens(lstRadares, DataConsulta);
+
+                List<ViagensDTO> retorno = new List<ViagensDTO>();
+                foreach (MilenioRadartonaAPI.Models.Viagens fvr in retornoInicial)  // AQUI É OUTRO RETORNO VER QUAL RETORNO
+                {
+                    List<ViagensDTO> radares = JsonConvert.DeserializeObject<List<ViagensDTO>>(fvr.JsonRetorno);
+                    foreach (ViagensDTO radar in radares)
+                    {
+                        retorno.Add(radar);
+                    }
+                }
+
+                return retorno;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
         }
 
-        public List<DistanciaViagemDTO> GetDistanciaViagem(string DataConsulta)
+        public List<DistanciaViagemDTO> GetDistanciaViagem(int radarInicial, int radarFinal)
         {
-            return _rep.GetDistanciaViagem(DataConsulta);
+            try
+            {
+                var retornoInicial = _rep.GetDistanciaViagem(radarInicial, radarFinal);
+
+
+                List<DistanciaViagemDTO> retorno = new List<DistanciaViagemDTO>();
+
+                foreach (MilenioRadartonaAPI.Models.DistanciaViagem fvr in retornoInicial)
+                {
+                    List<DistanciaViagemDTO> viagens = JsonConvert.DeserializeObject<List<DistanciaViagemDTO>>(fvr.JsonRetorno);
+                    foreach (DistanciaViagemDTO viagem in viagens)
+                    {
+                        retorno.Add(viagem);
+                    }
+                }
+
+                return retorno;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
         }
 
-        public bool VerificaChaveTaValida(string chave)
-        {
-            return _rep.VerificaChaveTaValida(chave);
-        }
-
-        public bool UsuarioPodePedirMaisReq(string chave)
-        {
-            return _rep.UsuarioPodePedirMaisReq(chave);
-        }
+        // === FUNCOES
 
         public async Task LogRequest(string Usuario, string Endpoint, long TempoRequisicao)
         {
             await _rep.LogRequest(Usuario, Endpoint, TempoRequisicao);
         }
 
+        public async Task<int> QtdRequestsDia(string Usuario)
+        {
+            return await _rep.QtdRequestsDia(Usuario);
+        }
+
         // ======== CSV ======== 
         public byte[] GetLocalizacaoRadaresCSV()
         {
-            return _rep.GetLocalizacaoRadaresCSV();
+            try
+            {
+                return _rep.GetLocalizacaoRadaresCSV();
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
         }
 
         public byte[] GetRadaresTipoEnquadramentoCSV(string Enquadramento)
         {
-            string[] Enquadramentos = Enquadramento.Split(",");
-            return _rep.GetRadaresTipoEnquadramentoCSV(Enquadramentos);
+            try
+            {
+                string[] Enquadramentos = Enquadramento.Split(",");
+                return _rep.GetRadaresTipoEnquadramentoCSV(Enquadramentos);
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
         }
 
-        public byte[] GetRadaresZonaConcessaoCSV(string ZonaConcessao)
+        public byte[] GetRadaresLoteCSV(int lote)
         {
-            return _rep.GetRadaresZonaConcessaoCSV(ZonaConcessao);
+            try
+            {
+                return _rep.GetRadaresLoteCSV(lote);
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
         }
 
         public byte[] GetFluxoVeiculosRadaresCSV(string Radares, string DataConsulta)
         {
-            string[] lstRadares = Radares.Split(",");
-            return _rep.GetFluxoVeiculosRadaresCSV(lstRadares, DataConsulta);
+            try
+            {
+                string[] lstRadares = Radares.Split(",");
+                return _rep.GetFluxoVeiculosRadaresCSV(lstRadares, DataConsulta);
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
         }
 
         public byte[] GetTipoVeiculosRadaresCSV(string Radares, string DataConsulta)
         {
-            string[] lstRadares = Radares.Split(",");
-            return _rep.GetTipoVeiculosRadaresCSV(lstRadares, DataConsulta);
+            try
+            {
+                string[] lstRadares = Radares.Split(",");
+                return _rep.GetTipoVeiculosRadaresCSV(lstRadares, DataConsulta);
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
         }
 
         public byte[] GetInfracoesPorRadarCSV(string Radares, string DataConsulta)
         {
-            string[] lstRadares = Radares.Split(",");
-            return _rep.GetInfracoesPorRadarCSV(lstRadares, DataConsulta);
+            try
+            {
+                string[] lstRadares = Radares.Split(",");
+                return _rep.GetInfracoesPorRadarCSV(lstRadares, DataConsulta);
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
         }
 
         public byte[] GetAcuraciaIdentificacaoRadaresCSV(string Radares, string DataConsulta)
         {
-            string[] lstRadares = Radares.Split(",");
-            return _rep.GetAcuraciaIdentificacaoRadaresCSV(lstRadares, DataConsulta);
+            try
+            {
+                string[] lstRadares = Radares.Split(",");
+                return _rep.GetAcuraciaIdentificacaoRadaresCSV(lstRadares, DataConsulta);
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
         }
 
         public byte[] GetPerfilVelocidadesRadarCSV(int VelocidadeMin, int VelocidadeMax)
         {
-            return _rep.GetPerfilVelocidadesRadarCSV(VelocidadeMin, VelocidadeMax);
+            try
+            {
+                return _rep.GetPerfilVelocidadesRadarCSV(VelocidadeMin, VelocidadeMax);
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
         }
 
         public byte[] GetTrajetosCSV(string DataConsulta, string Radares)
         {
-            string[] lstRadares = Radares.Split(",");
-            return _rep.GetTrajetosCSV(DataConsulta, lstRadares);
+            try
+            {
+                string[] lstRadares = Radares.Split(",");
+                return _rep.GetTrajetosCSV(DataConsulta, lstRadares);
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
         }
 
         public byte[] GetVelocidadeMediaTrajetoCSV(string DataConsulta, string Radares)
         {
-            string[] lstRadares = Radares.Split(",");
-            return _rep.GetVelocidadeMediaTrajetoCSV(DataConsulta, lstRadares);
+            try
+            {
+                string[] lstRadares = Radares.Split(",");
+                return _rep.GetVelocidadeMediaTrajetoCSV(DataConsulta, lstRadares);
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
         }
 
         public byte[] GetViagensCSV(string DataConsulta, string Radares)
         {
-            string[] lstRadares = Radares.Split(",");
-            return _rep.GetViagensCSV(DataConsulta, lstRadares);
+            try
+            {
+                string[] lstRadares = Radares.Split(",");
+                return _rep.GetViagensCSV(DataConsulta, lstRadares);
+            }
+            catch (Exception e)
+            {
+                return null;
+            }            
         }
 
-        public byte[] GetDistanciaViagemCSV(string DataConsulta)
+        public byte[] GetDistanciaViagemCSV(int radarInicial, int radarFinal)
         {
-            return _rep.GetDistanciaViagemCSV(DataConsulta);
+            try
+            {
+                return _rep.GetDistanciaViagemCSV(radarInicial, radarFinal);
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
         }
     }
 }

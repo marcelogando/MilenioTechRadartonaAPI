@@ -104,7 +104,7 @@ namespace MilenioRadartonaAPI.Areas.Identity.Pages.Account
                         //    $"Por favor confirme sua conta <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicando aqui</a>.");
 
                         await _roleManager.CreateAsync(new IdentityRole(Roles.ROLE_API_RADAR));
-                        var userIdentity = _userManager.FindByNameAsync(Input.Email).Result; //TODO: PEGAR ESSE METODO E JOGAR ELE NO LOGINCONTROLLER,  
+                        var userIdentity = _userManager.FindByNameAsync(Input.Email).Result;
                 
                         await _userManager.AddToRoleAsync(userIdentity, Roles.ROLE_API_RADAR);
 
@@ -122,37 +122,17 @@ namespace MilenioRadartonaAPI.Areas.Identity.Pages.Account
                             CriacaoDeConta = DateTime.Now,
                             UltimaMudancaDeSenha = DateTime.Now,
                             TipoUsuario = Roles.ROLE_API_RADAR,                            
-                            Nome = Input.Nome,
+                            Nome = Input.Nome, 
                         };
-
 
                         IList<RequisicaoInfos> reqs = new List<RequisicaoInfos>();
                         RequisicaoInfos req = new RequisicaoInfos()
                         {
                             QtdReqFeitasNoDia = 0,
                             QtdReqDiaMax = 1000,
-                            
+                            DiaRequisicao = DateTime.Now,
+                            Usuario = usuario,
                         };
-
-                        IList<DiasAutenticados> diasAutenticados = new List<DiasAutenticados>();
-                        DiasAutenticados dia = new DiasAutenticados()
-                        {
-                            DiaAutenticado = DateTime.Now
-                        };
-
-                        diasAutenticados.Add(dia);
-                        req.DiasAutenticados = diasAutenticados;
-
-                        IList<Acesso> acessoList = new List<Acesso>();
-                        Acesso acesso = new Acesso()
-                        {
-                            Url = "Register",
-                        };
-
-                        RelatorioReq r = new RelatorioReq();
-
-                        acesso.Descricao = "Usuario Criou sua conta na nossa aplicação";
-                        req.Acessos = acessoList;
 
                         reqs.Add(req);
                         usuario.ReqInfos = reqs;
@@ -160,11 +140,11 @@ namespace MilenioRadartonaAPI.Areas.Identity.Pages.Account
                         _ctx.Usuarios.Add(usuario);
                         _ctx.SaveChanges();
 
-                        User userToken = new User();
-                        userToken.UserID = Input.Email;
-                        userToken.Password = Input.Password;
+                        User userLogin = new User();
+                        userLogin.UserID = Input.Email;
+                        userLogin.Password = Input.Password;
 
-                        returnUrl = Url.Content("~/api/Login/" + userToken.UserID + "/" + userToken.Password);
+                        returnUrl = Url.Content("~/api/Login/" + userLogin.UserID + "/" + userLogin.Password);
 
                         return LocalRedirect(returnUrl);
 

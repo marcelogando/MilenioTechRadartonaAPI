@@ -19,7 +19,8 @@ namespace MilenioRadartonaAPI.Controllers
             _ctx = ctx;
         }
 
-        public IActionResult Index()
+
+        public IActionResult Index(string erro)
         {
             if (User.Identity.Name != null)
             {
@@ -31,6 +32,13 @@ namespace MilenioRadartonaAPI.Controllers
                 ViewData["Token"] = usuario.Chave.Token;
                 ViewData["Nome"] = usuario.Nome;
                 ViewData["Celular"] = usuario.Celular;
+                if (erro != null)
+                {
+                    if (erro.Equals("DataErrada"))
+                    { 
+                        ViewData["Erro"] = " Por favor, Insira a Data Correta e No Formato Informado!\n Para Mais informações Visite Nossa Documentação:\n" ;
+                    }
+                }
 
                 return View();
             }

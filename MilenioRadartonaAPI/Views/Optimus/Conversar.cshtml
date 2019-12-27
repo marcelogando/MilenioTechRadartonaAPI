@@ -1,0 +1,500 @@
+﻿@using MilenioRadartonaAPI.DTO
+
+@{
+    ViewData["Title"] = "Conversar";
+    Layout = "~/Views/Shared/_LayoutIntra.cshtml";
+
+    var msgs = ViewData["Mensagens"] as List<MensagemDTO>;
+
+}
+
+<link rel="stylesheet" href="~/css/intra.css">
+<link rel="stylesheet" href="~/intra/icons/style.css">
+<link rel="stylesheet" href="~/css/chat.css">
+<link rel="stylesheet" href="~/icons/send-icon/style.css">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+
+
+<style>
+
+    body {
+        background-image: url('../../../images/bgs/fundao-parede7.jpg');
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-position: center;
+    }
+
+    .item-lista {
+        background: url('../../../images/bgs/fundao-parede3.jpg');
+        background-repeat: repeat;
+        background-size: 400%;
+        width: 100% !important;
+        border-radius: 10px 10px 10px 10px;
+        padding: 15px;
+    }
+
+    .titulo {
+        font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+        color: #606040;
+    }
+
+    .fundo-amarelinho {
+        background: #fffda1;
+    }
+
+        .fundo-amarelinho:hover {
+            background: #f1c36e;
+            transition-duration: 250ms;
+            cursor: grab;
+        }
+
+    .card-img {
+        width: 100%;
+        height: auto;
+        border: #999600 solid 2px;
+        margin-left: auto !important;
+    }
+
+    .active {
+        background: #999600 !important;
+    }
+
+    .border-pretinha {
+        border: #161600 solid 1px;
+    }
+
+    .infos-caminhoneiro {
+        list-style: none;
+        width: 100%;
+        height: auto;
+        padding: 15px;
+        background: #ffffff;
+        color: #606040 !important;
+    }
+
+    .nome-caminhoneiro {
+        margin-top: -20px;
+        text-align: center;
+        color: #fffda1;
+        text-transform: uppercase !important;
+    }
+
+    /* SCROLL BAR */
+
+    ::-webkit-scrollbar {
+        width: 12px;
+    }
+
+    ::-webkit-scrollbar-button {
+        display: none;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: #202020;
+    }
+
+    ::-webkit-scrollbar-track-piece {
+        background: #fff;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        margin: 2px;
+        background: #202020;
+    }
+
+    ::-webkit-resizer {
+        background: #fff;
+    }
+
+    #map {
+        height: 400px; /* The height is 400 pixels */
+        width: 100%; /* The width is the width of the web page */
+    }
+
+    .titulo {
+        font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+        color: #606040;
+        background: #fffda1;
+        border-radius: 20px 20px 0px 0px;
+    }
+</style>
+
+
+
+<div class="container-fluid mt-5 pt-5 rounded mb-3">
+    <div class="container bg-light mt-5" style="border-radius: 20px 20px 10px 10px;">
+        <div class="row">
+            <div class="w-100 titulo">
+                <h1 class="text-center rounded p-2">Informações Básicas</h1>
+            </div>
+
+            <div class="container pl-5 pr-5 pb-5 pt-4">
+                <div class="row">
+
+                    <div class="card mb-3 item-lista">
+                        <div class="row no-gutters">
+                            <div class="col-md-4">
+                                <img src="../../../images/images-caminhoneiros/caminhoneiro1.png" class="card-img" alt="josé">
+                            </div>
+                            <div class="col-md-8">
+                                <div class="card-body">
+                                    <h5 class="nome-caminhoneiro pt-2 pb-1">José Silveira da Silva</h5>
+                                    <ul class="infos-caminhoneiro rounded">
+                                        <li><strong>Status: </strong>Atrasado</li>
+                                        <li><strong>Viagem De: </strong>1:30:00</li>
+                                        <li><strong>Está com: </strong>2:30:00</li>
+                                        <li><strong>Atraso De: </strong>60 minutos</li>
+                                        <li><strong>Local: </strong>Avenida Cupecê</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 mt-3">
+                            <div id="map"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid mt-3 rounded mb-3">
+    <div class="container bg-light mt-3" style="border-radius: 20px 20px 10px 10px;">
+        <div class="row">
+            <div class="w-100 titulo">
+                <h1 class="text-center rounded p-2">Chat de Conversa</h1>
+            </div>
+
+            <div class="container-fluid pb-5 pt-4">
+                <div class="row">
+
+                    <div class="card item-lista">
+                        <div class="row no-gutters">
+                            <div class="col-12">
+
+                                <div class="col-sm-12 col-md-4 frame" style="margin: auto;">
+
+                                    <ul class="ul"></ul>
+                                    <div>
+                                        <div class="msj-rta macro">
+                                            <div class="text text-r" style="background:whitesmoke !important">
+                                                <input class="mytext" placeholder="mande um oi" />
+                                            </div>
+                                        </div>
+
+                                        <div style="padding: 10px;position: absolute;right: 10px!important;" class="div-do-span-do-chat">
+                                            <span class="btn btn-primary span-do-chat icon-paper-plane"></span> 
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<script type="text/javascript" src="~/javascript/jquery-3.4.1-COMPLETASSO.js"></script>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+
+<!-- Optional JavaScript -->
+<script type="text/javascript" src="~/javascript/jquery-funcoes-htmls.js"></script>
+
+
+<script type="text/javascript">
+
+    function MensagemDTO() {
+        var Corpo;
+        var CaminhaoId;
+        var UsuarioId;
+        var Sender;
+    }
+
+    var me = {};
+    me.avatar = "../../../images/images-caminhoneiros/caminhoneiro1.png"
+    var you = {};
+    you.avatar = "https://scontent.fcgh5-1.fna.fbcdn.net/v/t1.0-1/p160x160/75398154_1942917645811191_249698978998779904_o.jpg?_nc_cat=104&_nc_ohc=FIcD5eSAGBcAQllmsLOkHRPXSmvNoKXSuq2pp4lvJ4Hse_52cw8T4zySw&_nc_ht=scontent.fcgh5-1.fna&oh=1323ada912b6ad8b1237319d9edba846&oe=5E47851E";
+
+
+    //-- No use time. It is a javaScript effect.
+    function insertChat(who, text, date, linkAudio) {
+        if (date === undefined) {
+            var data = new Date();
+            date = data.toLocaleString();
+        }
+        var control = "";
+
+        if (who == "you") {
+            control = '<li style="width:100%">' +
+                '<div class="msj macro">' +
+                '<div class="avatar"><img class="img-circle border rounded-circle" style="width:100%;" src="' + me.avatar + '" /></div>' +
+                '<div class="text text-l">' +
+                '<a target="blank" href="'+linkAudio+'">' + text + '</a>' +
+                '<p><small>' + date + '</small></p>' +
+                '</div>' +
+                '</div>' +
+                '</li>';
+        } else {
+            control = '<li style="width:100%;">' +
+                '<div class="msj-rta macro">' +
+                '<div class="text text-r">' +
+                '<p>' + text + '</p>' +
+                '<p><small>' + date + '</small></p>' +
+                '</div>' +
+                '<div class="avatar" style="padding:0px 0px 0px 10px !important"><img class="img-circle  border rounded-circle" style="width:100%;" src="' + you.avatar + '" /></div>' +
+                '</li>';
+        }
+        $(".ul").animate({ scrollTop: 9999 }, 'fast').append(control).scrollTop($(".ul").prop('scrollHeight'));
+
+    }
+
+    function resetChat() {
+        $(".ul").empty();
+    }
+
+    $(".mytext").on("keydown", function (e) {
+        if (e.which == 13) {
+            var text = $(this).val();
+            if (text !== "") {
+                insertChat("me", text);
+                $(this).val('');
+                var msg = new MensagemDTO();
+
+                msg.Corpo = text;
+                msg.CaminhaoId = 1;
+                msg.UsuarioId = 1;
+                msg.Sender = "me";
+
+                    $.ajax({
+                        type: "POST",
+                        url: "@Url.Action("SendMensagemAsync", "Optimus")",
+                        contentType: "application/json; charset=utf-8",
+                        data:
+                            JSON.stringify(msg)
+                        ,
+                        dataType: "json",
+                        success: function (json) {
+
+                        },
+
+                        error: function (erro) {
+                            console.log(erro);
+                        },
+
+                    });
+            }
+        }
+    });
+
+    $('.div-do-span-do-chat:nth-child(2) > span').click(function () {
+        $(".mytext").trigger({ type: 'keydown', which: 13, keyCode: 13 });
+    })
+
+        //-- Print Messages
+
+
+        @for (int i = 0; i < msgs.Count; i++)
+         {
+            <text>insertChat('@msgs.ElementAt(i).Sender', '@msgs.ElementAt(i).Corpo', '@msgs.ElementAt(i).DataHora','@msgs.ElementAt(i).LinkAudio');</text>
+         }
+
+
+    window.setInterval(function () {
+
+        $.ajax({
+            type: "GET",
+            url: "@Url.Action("AtualizaChat","Optimus")",
+            contentType: "application/json; charset=utf-8",
+
+            data: {
+                usuarioId: 1,
+                caminhaoId: 1,
+            },
+
+            success: function (mensagens) {
+
+                resetChat();
+
+                for (var i = 0; i < mensagens.length; i++) {
+                    var data = new Date(mensagens[i].dataHora);
+                    insertChat(mensagens[i].sender, mensagens[i].corpo, data.toLocaleString(), mensagens[i].linkAudio);
+                }
+
+            },
+
+            error: function (erro) {
+                console.log(erro);
+            },
+
+        });
+
+    }, 13000);
+
+
+        //    resetChat(); ------------- PRA RESETAR O CHAT
+
+        //-- NOTE: No use time on insertChat.
+
+
+
+</script>
+
+<script type="text/javascript">
+
+    // VAR GLOBAIS
+    var map;
+    var markers = [];
+    var markersAnteriores;
+    var centro;
+    var zoom;
+    var markerCluster;
+    var radares = [];
+    var enquadramento;
+
+
+    /* FUNCÃO DE DESENHAR OBJETOS NO MAPA */
+    function DesenhaMarkersNoMapa(map, markersAnteriores) {
+
+        if (markersAnteriores != null) {
+            for (var i = 0; i < markersAnteriores.length; i++) {
+                markersAnteriores[i].setMap(null);
+            }
+        }
+        else {
+            for (var i = 0; i < markers.length; i++) {
+                markers[i].setMap(map);
+            }
+        }
+    }
+
+    // Remove os markers do mapa, mas mantém no array.
+    function LimpaMarkers(markersAnteriores) {
+        DesenhaMarkersNoMapa(null, markersAnteriores);
+    }
+
+    // Deleta todos os markers no array retirando a referencia a eles.
+    function DeletaMarkers() {
+        LimpaMarkers(markersAnteriores);
+        markers = [];
+    }
+
+
+    function Caminhao() {
+        var Placa;
+        var Lat;
+        var Lon;
+        var Marca;
+        var TempoDeViagemPrevista;
+        var TempoDeViagemTotal;
+    }
+
+
+
+    $(document).ready(function () {
+        $('.quad').css({ 'background-color': '#112640', 'transition-duration': '1000ms' });
+        $('.quad4').css({ 'background-color': '#112640', 'transition-duration': '1000ms' });
+        $('#navbarTogglerDemo03').css({ 'background-color': '#112640cc', 'transition-duration': '1000ms' });
+        $('.nav-link').css({ 'color': '#d1e2ff', 'transition-duration': '1000ms' });
+        $('h1.navbar-brand').css({ 'color': '#d1e2ff', 'transition-duration': '1000ms' })
+        $('h5.nav-link').css({ 'color': '#112640', 'transition-duration': '1000ms' });
+        $('.escuro').css({ 'color': '#112640', 'transition-duration': '1000ms' });
+
+
+        /* DESENHOS */
+        function CriaCaminhaoNoMapa(caminhao, map) {
+
+            var latLog = { lat: -23.663921, lng: -46.660604 };
+
+            var iconRadar = {
+                url: "../../../images/icones/caminhao-icon.png",
+                scaledSize: new google.maps.Size(60, 60)
+            }
+
+            var contentString =
+                '<div id="content">' +
+                '<div id="siteNotice">' +
+                '</div>' +
+                '<h1 id="firstHeading" class="firstHeading"> KPL2014 </h1>' +
+                '<div id="bodyContent">' +
+                '<div>' +
+                '<div>' +
+                '<div style=\"padding-top:10px;\"><b>Marca: </b> Mercedes Benz </div>' +
+                '<div style=\"padding-top:10px;\"><b>Tempo Em Viagem: </b> 2:30:00 </div>' +
+                '<div style=\"padding-top:10px;\"><b>Tempo Estimado De Viagem: </b> 1:30:00 </div>' +
+                '<div style=\"padding-top:10px;\"><b>Atrazo: </b> 60 minutos </div>' +
+                '</div>' +
+                '</div>' +
+                '</div>';
+
+            var infoWindow = new google.maps.InfoWindow({
+                content: contentString
+            });
+
+            var marker = new google.maps.Marker({
+                position: latLog,
+                map: map,
+                icon: iconRadar,
+            });
+
+            google.maps.event.addListener(marker, 'mouseover', (function (marker, contentString, infoWindow) {
+                return function () {
+                    infoWindow.setContent(contentString);
+                    infoWindow.open(map, marker);
+                };
+            })(marker, contentString, infoWindow));
+
+            markers.push(marker);
+
+        }
+
+
+        CriaCaminhaoNoMapa(0, map);
+
+
+    });
+
+    function initMap() {
+
+        centro = { lat: -23.663921, lng: -46.660604 };
+
+        map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 14,
+            center: centro
+        });
+
+    }
+
+</script>
+
+
+<script>
+
+    $(document).ready(function () {
+        $('.quad').css({ 'background-color': '#999600', 'transition-duration': '1000ms' });
+        $('.quad4').css({ 'background-color': '#999600', 'transition-duration': '1000ms' });
+        $('#navbarTogglerDemo03').css({ 'background-color': '#999600cc', 'transition-duration': '1000ms' });
+        $('.nav-link').css({ 'color': '#fffda1', 'transition-duration': '1000ms' });
+        $('h1.navbar-brand').css({ 'color': '#fffda1', 'transition-duration': '1000ms' })
+        $('h5.nav-link').css({ 'color': '#fffda1', 'transition-duration': '1000ms' });
+        $('.escuro').css({ 'color': '#999600', 'transition-duration': '1000ms' });
+    });
+
+</script>
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAetDOkpSEBIKOJixhbEbDCynIQ8XM6Jqs&callback=initMap" async defer></script>

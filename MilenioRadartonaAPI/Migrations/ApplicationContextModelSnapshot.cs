@@ -16,31 +16,8 @@ namespace MilenioRadartonaAPI.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn)
-                .HasAnnotation("ProductVersion", "2.2.6-servicing-10079")
+                .HasAnnotation("ProductVersion", "2.2.4-servicing-10062")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
-
-            modelBuilder.Entity("MilenioRadartonaAPI.Models.Acesso", b =>
-                {
-                    b.Property<int>("AcessoId")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("Descricao");
-
-                    b.Property<int?>("RelatorioReqId");
-
-                    b.Property<int?>("RequisicaoInfosId");
-
-                    b.Property<string>("Url")
-                        .IsRequired();
-
-                    b.HasKey("AcessoId");
-
-                    b.HasIndex("RelatorioReqId");
-
-                    b.HasIndex("RequisicaoInfosId");
-
-                    b.ToTable("Acessos");
-                });
 
             modelBuilder.Entity("MilenioRadartonaAPI.Models.Caminhao", b =>
                 {
@@ -76,23 +53,7 @@ namespace MilenioRadartonaAPI.Migrations
                     b.HasIndex("UsuarioId")
                         .IsUnique();
 
-                    b.ToTable("Chaves");
-                });
-
-            modelBuilder.Entity("MilenioRadartonaAPI.Models.DiasAutenticados", b =>
-                {
-                    b.Property<int>("DiasAutenticadosId")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<DateTime>("DiaAutenticado");
-
-                    b.Property<int?>("RequisicaoInfosId");
-
-                    b.HasKey("DiasAutenticadosId");
-
-                    b.HasIndex("RequisicaoInfosId");
-
-                    b.ToTable("DiasLogados");
+                    b.ToTable("Chave");
                 });
 
             modelBuilder.Entity("MilenioRadartonaAPI.Models.Mensagem", b =>
@@ -108,6 +69,8 @@ namespace MilenioRadartonaAPI.Migrations
 
                     b.Property<string>("LinkAudio");
 
+                    b.Property<string>("Sender");
+
                     b.Property<int>("UsuarioId");
 
                     b.HasKey("MensagemId");
@@ -119,36 +82,12 @@ namespace MilenioRadartonaAPI.Migrations
                     b.ToTable("Mensagens");
                 });
 
-            modelBuilder.Entity("MilenioRadartonaAPI.Models.RelatorioReq", b =>
-                {
-                    b.Property<int>("RelatorioReqId")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("Evento");
-
-                    b.Property<DateTime>("Fim");
-
-                    b.Property<DateTime>("Inicio");
-
-                    b.Property<double>("Lat");
-
-                    b.Property<double>("Lon");
-
-                    b.Property<double>("Raio");
-
-                    b.HasKey("RelatorioReqId");
-
-                    b.ToTable("RelatoriosReqs");
-                });
-
             modelBuilder.Entity("MilenioRadartonaAPI.Models.RequisicaoInfos", b =>
                 {
                     b.Property<int>("RequisicaoInfosId")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<int>("AcessoId");
-
-                    b.Property<int>("DiasAutenticadosId");
+                    b.Property<DateTime>("DiaRequisicao");
 
                     b.Property<int>("QtdReqDiaMax");
 
@@ -192,30 +131,12 @@ namespace MilenioRadartonaAPI.Migrations
                     b.ToTable("Usuarios");
                 });
 
-            modelBuilder.Entity("MilenioRadartonaAPI.Models.Acesso", b =>
-                {
-                    b.HasOne("MilenioRadartonaAPI.Models.RelatorioReq", "Relatorio")
-                        .WithMany()
-                        .HasForeignKey("RelatorioReqId");
-
-                    b.HasOne("MilenioRadartonaAPI.Models.RequisicaoInfos")
-                        .WithMany("Acessos")
-                        .HasForeignKey("RequisicaoInfosId");
-                });
-
             modelBuilder.Entity("MilenioRadartonaAPI.Models.Chave", b =>
                 {
                     b.HasOne("MilenioRadartonaAPI.Models.Usuario", "Usuario")
                         .WithOne("Chave")
                         .HasForeignKey("MilenioRadartonaAPI.Models.Chave", "UsuarioId")
                         .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("MilenioRadartonaAPI.Models.DiasAutenticados", b =>
-                {
-                    b.HasOne("MilenioRadartonaAPI.Models.RequisicaoInfos")
-                        .WithMany("DiasAutenticados")
-                        .HasForeignKey("RequisicaoInfosId");
                 });
 
             modelBuilder.Entity("MilenioRadartonaAPI.Models.Mensagem", b =>

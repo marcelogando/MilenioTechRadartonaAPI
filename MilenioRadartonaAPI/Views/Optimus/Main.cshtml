@@ -1,0 +1,297 @@
+﻿
+@{
+    ViewData["Title"] = "Main";
+    Layout = "~/Views/Shared/_LayoutIntra.cshtml";
+}
+<link rel="stylesheet" href="~/css/intra.css">
+<link rel="stylesheet" href="~/intra/icons/style.css">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+<style>
+        body {
+            background-image: url('../images/bgs/fundao-parede7.jpg');
+            background-attachment: fixed;
+        }
+
+        .item-lista {
+            background: #fffda1;
+            width: 100% !important;
+            border-radius: 2px 10px 10px 2px;
+            padding: 15px;
+        }
+
+        .titulo {
+            font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+            color: #606040;
+            background: #fffda1;
+            border-radius: 20px 20px 0px 0px;
+        }
+
+        .fundo-amarelinho {
+            /* background: #fffda1; */
+            background: url('../images/bgs/fundao-parede3.jpg');
+            background-repeat: repeat;
+            background-size: 400%;
+        }
+
+            .fundo-amarelinho:hover .nome-caminhoneiro {
+                color: #fffda1;
+                transition-duration: 250ms;
+                cursor: grab !important;
+            }
+
+
+        .item-lista:hover {
+            background: #f1c36e;
+            cursor: pointer;
+            transition-duration: 250ms;
+        }
+
+        .card-img {
+            width: 100%;
+            height: auto;
+            border: #999600 solid 2px;
+            margin-left: auto !important;
+        }
+
+        .active {
+            background: #999600 !important;
+        }
+
+        .border-pretinha {
+            border: #161600 solid 1px;
+        }
+
+        .infos-caminhoneiro {
+            list-style: none;
+            width: 90%;
+            height: auto;
+            margin: auto;
+            padding: 10px;
+            background: #ffffff;
+            color: #606040 !important;
+        }
+
+
+        .nome-caminhoneiro {
+            margin-top: -20px;
+            text-align: center;
+            color: #606040;
+            text-transform: uppercase !important;
+        }
+
+        /* SCROLL BAR */
+
+        ::-webkit-scrollbar {
+            width: 12px;
+        }
+
+        ::-webkit-scrollbar-button {
+            display: none;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #202020;
+        }
+
+        ::-webkit-scrollbar-track-piece {
+            background: #fff;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            margin: 2px;
+            background: #202020;
+        }
+
+        ::-webkit-resizer {
+            background: #fff;
+        }
+    </style>
+
+
+<div class="container-fluid mt-5 pt-5 rounded mb-3">
+    <div class="container bg-light mt-5" style="border-radius: 20px 20px 10px 10px;">
+        <div class="row">
+            <div class="w-100 titulo">
+                <h1 class="text-center rounded p-2">Caminhoneiros</h1>
+            </div>
+
+            <div class="container pl-5 pr-5 pb-5 pt-4">
+                <div class="row">
+
+                    <div class="card m-2 fundo-amarelinho" style="width: 15rem;">
+                        <img src="../images/images-caminhoneiros/caminhoneiro1.png" class="card-img-top">
+                        <div class="card-body">
+                            <h5 class="nome-caminhoneiro pt-4">José Silveira da Silva</h5>
+                        </div>
+                        <ul class="list-group list-group-flush rounded infos-caminhoneiro">
+                            <li class="list-group-item"><strong>Status: </strong>Atrasado</li>
+                            <li class="list-group-item"><strong>Viagem De: </strong>1:30:00</li>
+                            <li class="list-group-item"><strong>Está com: </strong>2:30:00</li>
+                            <li class="list-group-item"><strong>Atraso De: </strong>60 min</li>
+                            <li class="list-group-item"><strong>Local: </strong>Av. Cupecê</li>
+                        </ul>
+                        <div class="card-body">
+                            <a class="btn btn-warning border-pretinha w-100" href="Conversar/1/1" >Conversar</a></p>
+                        </div>
+                    </div>
+
+                    <div class="card m-2 fundo-amarelinho" style="width: 15rem;">
+                        <img src="../images/images-caminhoneiros/caminhoneiro2.png" class="card-img-top">
+                        <div class="card-body">
+                            <h5 class="nome-caminhoneiro pt-4">João Guimarães</h5>
+                        </div>
+                        <ul class="list-group list-group-flush rounded infos-caminhoneiro">
+                            <li class="list-group-item"><strong>Status: </strong>Normal</li>
+                            <li class="list-group-item"><strong>Viagem De: </strong>2:30:00</li>
+                            <li class="list-group-item"><strong>Está com: </strong>1:30:00</li>
+                            <li class="list-group-item"><strong>Atraso De: </strong>0 min</li>
+                            <li class="list-group-item"><strong>Local: </strong>Av. Do Estado</li>
+                        </ul>
+                        <div class="card-body">
+                            <button class="btn btn-warning border-pretinha w-100">Conversar</button></p>
+                        </div>
+                    </div>
+
+                    <div class="card m-2 fundo-amarelinho" style="width: 15rem;">
+                        <img src="../images/images-caminhoneiros/caminhoneiro3.png" class="card-img-top">
+                        <div class="card-body">
+                            <h5 class="nome-caminhoneiro pt-4">Arthur Dos Santos</h5>
+                        </div>
+                        <ul class="list-group list-group-flush rounded infos-caminhoneiro">
+                            <li class="list-group-item"><strong>Status: </strong>Atrasado</li>
+                            <li class="list-group-item"><strong>Viagem De: </strong>1:30:00</li>
+                            <li class="list-group-item"><strong>Está com: </strong>2:30:00</li>
+                            <li class="list-group-item"><strong>Atraso De: </strong>60 min</li>
+                            <li class="list-group-item"><strong>Local: </strong>Av. Dos Bandeirantes</li>
+                        </ul>
+                        <div class="card-body">
+                            <button class="btn btn-warning border-pretinha w-100">Conversar</button></p>
+                        </div>
+                    </div>
+
+                    <div class="card m-2 fundo-amarelinho" style="width: 15rem;">
+                        <img src="../images/images-caminhoneiros/caminhoneiro4.png" class="card-img-top">
+                        <div class="card-body">
+                            <h5 class="nome-caminhoneiro pt-4">Willian Samarone</h5>
+                        </div>
+                        <ul class="list-group list-group-flush rounded infos-caminhoneiro">
+                            <li class="list-group-item"><strong>Status: </strong>Atrasado</li>
+                            <li class="list-group-item"><strong>Viagem De: </strong>1:30:00</li>
+                            <li class="list-group-item"><strong>Está com: </strong>2:30:00</li>
+                            <li class="list-group-item"><strong>Atraso De: </strong>60 min</li>
+                            <li class="list-group-item"><strong>Local: </strong>Rua Da Liberdade</li>
+                        </ul>
+                        <div class="card-body">
+                            <button class="btn btn-warning border-pretinha w-100">Conversar</button></p>
+                        </div>
+                    </div>
+
+                    <div class="card m-2 fundo-amarelinho" style="width: 15rem;">
+                        <img src="../images/images-caminhoneiros/caminhoneiro5.png" class="card-img-top">
+                        <div class="card-body">
+                            <h5 class="nome-caminhoneiro pt-4">Bernardo Da Silva</h5>
+                        </div>
+                        <ul class="list-group list-group-flush rounded infos-caminhoneiro">
+                            <li class="list-group-item"><strong>Status: </strong>Atrasado</li>
+                            <li class="list-group-item"><strong>Viagem De: </strong>1:30:00</li>
+                            <li class="list-group-item"><strong>Está com: </strong>2:30:00</li>
+                            <li class="list-group-item"><strong>Atraso De: </strong>60 min</li>
+                            <li class="list-group-item"><strong>Local: </strong>Av. Nações Unidas</li>
+                        </ul>
+                        <div class="card-body">
+                            <button class="btn btn-warning border-pretinha w-100">Conversar</button></p>
+                        </div>
+                    </div>
+
+                    <div class="card m-2 fundo-amarelinho" style="width: 15rem;">
+                        <img src="../images/images-caminhoneiros/caminhoneiro6.png" class="card-img-top">
+                        <div class="card-body">
+                            <h5 class="nome-caminhoneiro pt-4">Fernando Figuereido</h5>
+                        </div>
+                        <ul class="list-group list-group-flush rounded infos-caminhoneiro">
+                            <li class="list-group-item"><strong>Status: </strong>Atrasado</li>
+                            <li class="list-group-item"><strong>Viagem De: </strong>1:30:00</li>
+                            <li class="list-group-item"><strong>Está com: </strong>2:30:00</li>
+                            <li class="list-group-item"><strong>Atraso De: </strong>60 min</li>
+                            <li class="list-group-item"><strong>Local: </strong>Av. Washington Luís</li>
+                        </ul>
+                        <div class="card-body">
+                            <button class="btn btn-warning border-pretinha w-100">Conversar</button></p>
+                        </div>
+                    </div>
+
+                    <div class="card m-2 fundo-amarelinho" style="width: 15rem;">
+                        <img src="../images/images-caminhoneiros/caminhoneiro7.png" class="card-img-top">
+                        <div class="card-body">
+                            <h5 class="nome-caminhoneiro pt-4">José Miguel Silva</h5>
+                        </div>
+                        <ul class="list-group list-group-flush rounded infos-caminhoneiro">
+                            <li class="list-group-item"><strong>Status: </strong>Atrasado</li>
+                            <li class="list-group-item"><strong>Viagem De: </strong>1:30:00</li>
+                            <li class="list-group-item"><strong>Está com: </strong>2:30:00</li>
+                            <li class="list-group-item"><strong>Atraso De: </strong>60 min</li>
+                            <li class="list-group-item"><strong>Local: </strong>Av. Washington Luís</li>
+                        </ul>
+                        <div class="card-body">
+                            <button class="btn btn-warning border-pretinha w-100">Conversar</button></p>
+                        </div>
+                    </div>
+
+                    <div class="card m-2 fundo-amarelinho" style="width: 15rem;">
+                        <img src="../images/images-caminhoneiros/caminhoneiro8.png" class="card-img-top">
+                        <div class="card-body">
+                            <h5 class="nome-caminhoneiro pt-4">Luciano Pereira</h5>
+                        </div>
+                        <ul class="list-group list-group-flush rounded infos-caminhoneiro">
+                            <li class="list-group-item"><strong>Status: </strong>Atrasado</li>
+                            <li class="list-group-item"><strong>Viagem De: </strong>1:30:00</li>
+                            <li class="list-group-item"><strong>Está com: </strong>2:30:00</li>
+                            <li class="list-group-item"><strong>Atraso De: </strong>60 min</li>
+                            <li class="list-group-item"><strong>Local: </strong>Av. Washington Luís</li>
+                        </ul>
+                        <div class="card-body">
+                            <button class="btn btn-warning border-pretinha w-100">Conversar</button></p>
+                        </div>
+                    </div>
+
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <nav aria-label="Page navigation example" class="mt-2">
+        <ul class="pagination justify-content-center">
+            <li class="page-item disabled">
+                <a class="page-link" href="#" tabindex="-1" aria-disabled="true">
+                    <
+                </a>
+            </li>
+            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item">
+                <a class="page-link" href="#" tabindex="-1" aria-disabled="false">></a>
+            </li>
+        </ul>
+    </nav>
+
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+<script>
+    $(document).ready(function () {
+        $('.quad').css({ 'background-color': '#999600', 'transition-duration': '1000ms' });
+        $('.quad4').css({ 'background-color': '#999600', 'transition-duration': '1000ms' });
+        $('#navbarTogglerDemo03').css({ 'background-color': '#999600cc', 'transition-duration': '1000ms' });
+        $('.nav-link').css({ 'color': '#fffda1', 'transition-duration': '1000ms' });
+        $('h1.navbar-brand').css({ 'color': '#fffda1', 'transition-duration': '1000ms' })
+        $('h5.nav-link').css({ 'color': '#fffda1', 'transition-duration': '1000ms' });
+        $('.escuro').css({ 'color': '#999600', 'transition-duration': '1000ms' });
+
+
+    });
+</script>

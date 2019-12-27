@@ -7,7 +7,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Options;
 using MilenioRadartonaAPI.Areas.Identity.Data;
+using MilenioRadartonaAPI.Models;
 using MilenioRadartonaAPI.Service;
 
 namespace MilenioRadartonaAPI.Areas.Identity.Pages.Account
@@ -17,11 +19,13 @@ namespace MilenioRadartonaAPI.Areas.Identity.Pages.Account
     {
         private readonly UserManager<MilenioRadartonaAPIUser> _userManager;
         private readonly IEmailSender _emailSender;
+        private readonly IOptions<MyConfig> _config;
 
-        public ForgotPasswordModel(UserManager<MilenioRadartonaAPIUser> userManager, IEmailSender emailSender)
+        public ForgotPasswordModel(UserManager<MilenioRadartonaAPIUser> userManager, IEmailSender emailSender, IOptions<MyConfig> config)
         {
             _userManager = userManager;
             _emailSender = emailSender;
+            _config = config;
         }
 
         [BindProperty]
@@ -39,7 +43,7 @@ namespace MilenioRadartonaAPI.Areas.Identity.Pages.Account
             if (ModelState.IsValid)
             {
                 var user = await _userManager.FindByEmailAsync(Input.Email);
-                if (user == null || !(await _userManager.IsEmailConfirmedAsync(user)))
+                if (user == null)
                 {
                     // Don't reveal that the user does not exist or is not confirmed
                     return RedirectToPage("./ForgotPasswordConfirmation");
@@ -52,10 +56,12 @@ namespace MilenioRadartonaAPI.Areas.Identity.Pages.Account
                     values: new { code },
                     protocol: Request.Scheme);
 
-                await _emailSender.SendEmailAsync(
+                _emailSender.SendEmailAsync(
                     Input.Email,
                     "Mudar Senha",
-                    $"Por favor, mude sua senha ao <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicar aqui</a>.", "servico@mileniobus.com.br", "Milênio Bus - Servicos");
+                    $"Por favor, mude sua senha ao <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicar aqui</a>.", "servico@mileniotech.com.br", "Milênio Tech - Servicos",
+                    _config.Value.EmailAdministrador,
+                    _config.Value.SenhaEmailAdministrador);
 
                 return RedirectToPage("./ForgotPasswordConfirmation");
             }
