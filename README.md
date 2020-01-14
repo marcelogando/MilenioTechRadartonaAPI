@@ -33,7 +33,7 @@ git config --global http.proxy http://user:senha@10.10.190.25:3128
 ```bash
 git clone https://github.com/marcelogando/RadartonaAPI.git
 
-cd RadartonaAPI
+cd MilenioTechRadartonaAPI
 
 sudo docker build -t milenio_tech_api .
 
