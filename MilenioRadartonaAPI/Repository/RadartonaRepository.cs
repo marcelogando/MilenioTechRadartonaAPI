@@ -52,7 +52,7 @@ namespace MilenioRadartonaAPI.Repository
 
     public class RadartonaRepository : IRadartonaRepository
     {
-        private static string connString = "Host=10.35.200.72;Port=5432;Username=smt_user;Password=smt_user;Database=radartona;";
+        private static string connString = "Host=10.35.200.226;Port=5432;Username=smt_user;Password=smt_user;Database=radartona;";
 
         private readonly ApplicationContextCamadaVizualizacao _ctxView;
 
