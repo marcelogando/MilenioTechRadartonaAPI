@@ -25,7 +25,7 @@ Nosso projeto visa solucionar o desafio, trazendo visibilidade e estruturação 
 ```bash
 git clone https://github.com/marcelogando/RadartonaAPI.git
 
-cd RadartonaAPI
+cd MilenioRadartonaAPI
 
 sudo docker build -t milenio_tech_api .
 
