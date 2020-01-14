@@ -125,17 +125,17 @@ namespace MilenioRadartonaAPI.Areas.Identity.Pages.Account
                             Nome = Input.Nome, 
                         };
 
-                        IList<RequisicaoInfos> reqs = new List<RequisicaoInfos>();
-                        RequisicaoInfos req = new RequisicaoInfos()
-                        {
-                            QtdReqFeitasNoDia = 0,
-                            QtdReqDiaMax = 1000,
-                            DiaRequisicao = DateTime.Now,
-                            Usuario = usuario,
-                        };
+                        //IList<RequisicaoInfos> reqs = new List<RequisicaoInfos>();
+                        //RequisicaoInfos req = new RequisicaoInfos()
+                        //{
+                        //    QtdReqFeitasNoDia = 0,
+                        //    QtdReqDiaMax = 1000,
+                        //    DiaRequisicao = DateTime.Now,
+                        //    Usuario = usuario,
+                        //};
 
-                        reqs.Add(req);
-                        usuario.ReqInfos = reqs;
+                        //reqs.Add(req);
+                        //usuario.ReqInfos = reqs;
 
                         _ctx.Usuarios.Add(usuario);
                         _ctx.SaveChanges();
@@ -153,7 +153,7 @@ namespace MilenioRadartonaAPI.Areas.Identity.Pages.Account
                 }
                 catch (Exception e)
                 {
-                    Console.Write(e.Message);
+                    throw e;
                 }
 
                 foreach (var error in result.Errors)
