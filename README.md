@@ -25,11 +25,15 @@ Nosso projeto visa solucionar o desafio, trazendo visibilidade e estruturação 
 ```bash
 git clone https://github.com/marcelogando/RadartonaAPI.git
 
-cd MilenioRadartonaAPI
+cd MilenioTechRadartonaAPI
 
 sudo docker build -t milenio_tech_api .
 
+(Se tiver SSL, rodar esse)
 sudo docker run --rm -it -d -p 80:80 -p 443:80 --name milenio_tech_api milenio_tech_api -dit --restart unless-stopped
+
+(Se não tiver SSL, rodar esse)
+sudo docker run --rm -it -d -p 80:80 --name milenio_tech_api milenio_tech_api -dit --restart unless-stopped
 ```
 
 ## Testes
