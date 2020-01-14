@@ -23,7 +23,7 @@ Nosso projeto visa solucionar o desafio, trazendo visibilidade e estruturação 
 ## Instalação no servidor
 
 ```bash
-git clone https://github.com/marcelogando/RadartonaAPI.git
+git clone https://github.com/marcelogando/MilenioTechRadartonaAPI.git
 
 cd MilenioTechRadartonaAPI
 
