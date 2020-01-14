@@ -36,18 +36,6 @@ sudo docker run --rm -it -d -p 80:80 -p 443:80 --name milenio_tech_api milenio_t
 sudo docker run --rm -it -d -p 80:80 --name milenio_tech_api milenio_tech_api -dit --restart unless-stopped
 ```
 
-## Testes
-
-Para rodar os testes, execute os comandos abaixo:
-
-```shell
-$ pip install
-
-$ pip shell
-
-$ pytest
-```
-
 ## Funcionalidades 
 
 - Protocolo HTTPS
