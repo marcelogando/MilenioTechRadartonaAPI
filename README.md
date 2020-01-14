@@ -74,6 +74,10 @@ $ pytest
 
 ![datalake](/MilenioRadartonaAPI/Presentation/datalake-ultimato.png)
 
+### UML Banco de Dados - Camada de Visualização
+
+![camada_visualização](/MilenioRadartonaAPI/Presentation/UML_camada_visualizacao.png)
+
 ## Casos de uso da API
 
 ![casos_uso](/MilenioRadartonaAPI/Presentation/casos_de_uso.jpg)
